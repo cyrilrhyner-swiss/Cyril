@@ -1,20 +1,1895 @@
-<!doctype html>
-<html lang="de-CH">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#102a34">
-  <title>FLOWCRAFT – Mission Gebäudetechnik</title>
-  <style>
-    html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#102a34;overflow:hidden}
-    body{position:fixed;inset:0}
-    iframe{display:block}
-    .fallback{position:fixed;inset:auto 12px 12px;z-index:2;text-align:center;font:13px system-ui;color:#d9eef0;pointer-events:none}
-    .fallback a{pointer-events:auto;color:#7de7e0}
-  </style>
-</head>
-<body>
-  <iframe src="https://flowcraft-mission-gebaeudetechnik.cyrilrhyner.chatgpt.site/" title="FLOWCRAFT – Mission Gebäudetechnik" allow="fullscreen" referrerpolicy="no-referrer"></iframe>
-  <div class="fallback">FLOWCRAFT lädt … <a href="https://flowcraft-mission-gebaeudetechnik.cyrilrhyner.chatgpt.site/">Direkt öffnen</a></div>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102a34"><meta name="description" content="FLOWCRAFT – Mission Gebäudetechnik. Berechne den Luftbedarf, baue deine Anlage und löse den Büro-Umbau. Ein kostenloses Offline-Lernspiel."><title>FLOWCRAFT – Mission Gebäudetechnik · 1.7</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#102a34}</style></head><body>
+<div id="flowcraft" class="af-standalone" lang="de" role="region" aria-label="FLOWCRAFT – interaktives Lüftungsspiel">
+  <div class="af-intro" data-ui="intro"><div class="af-intro-mark" aria-hidden="true"><i></i><i></i><i></i></div><b>FLOWCRAFT</b><span>Mission Gebäudetechnik</span><button data-act="skip-intro">Los geht’s →</button></div>
+  <header class="af-head">
+    <div class="af-brand"><span class="af-logo" aria-hidden="true"><i></i><i></i><i></i></span><div><b>FLOWCRAFT</b><small>Mission Gebäudetechnik</small></div></div>
+    <div class="af-xp" data-ui="xp" hidden><small>FLOW · EINSATZ</small><b data-ui="xp-value">0 / 1000</b><i></i></div>
+    <button class="af-money" data-act="budget" aria-label="Budget und Bauteilkosten"><small>RESTBUDGET</small><b data-ui="budget">CHF 3'200</b></button>
+    <button class="af-icon af-board-button" data-act="missions" aria-label="Einsatzübersicht öffnen" hidden>▦</button><button class="af-icon" data-act="help" title="Spielhilfe" aria-label="Spielhilfe">?</button>
+    <button class="af-icon" data-act="reset" title="Neustart" aria-label="Mission neu starten">↻</button>
+  </header>
+  <section class="af-meters" aria-label="Messwerte – antippen für Erklärung">
+    <button class="af-meter" data-metric="co2"><span>CO₂ <i>!</i></span><b data-val="co2">1'630</b><em>ppm</em><small>Ziel ≤ 1'000</small></button>
+    <button class="af-meter" data-metric="noise"><span>Lärm <i>✓</i></span><b data-val="noise">29</b><em>dB(A)</em><small>Ziel ≤ 40</small></button>
+    <button class="af-meter" data-metric="draft"><span>Zugluft <i>!</i></span><b data-val="draft">0.23</b><em>m/s</em><small>Ziel ≤ 0.22</small></button>
+    <button class="af-meter" data-metric="power"><span>Strom <i>✓</i></span><b data-val="power">15</b><em>W</em><small>Ziel ≤ 85</small></button>
+  </section>
+  <section class="af-world" aria-label="Dreidimensionales Büro">
+    <canvas tabindex="0" aria-label="Büro. Tippen: laufen oder Bauteil wählen. Ziehen: Kamera drehen. Plus und Minus: Zoom."></canvas>
+    <div class="af-planning-reveal" data-ui="planning-reveal" hidden>Problem gefunden. Jetzt planst du die Anlage.</div><div class="af-air-reading" data-ui="air-reading" hidden></div>
+    <div class="af-opening-line" data-ui="opening-line"></div>
+    <button class="af-guide-marker" data-act="guide-target" hidden>◎ MESSPUNKT</button>
+    <div class="af-reward" data-ui="reward" hidden role="status"><span class="af-buddy" aria-hidden="true"><i></i><i></i></span><span data-ui="reward-text"></span></div><div class="af-beam-cues" data-ui="beam-cues" hidden></div><span class="af-spatial-arrow" data-ui="beam-down" hidden aria-hidden="true">↓</span><span class="af-spatial-arrow" data-ui="beam-up" hidden aria-hidden="true">↑</span>
+    <div class="af-world-top"><span class="af-chip" data-ui="progress">0 / 4 Ziele</span><button class="af-chip af-trial" data-act="trial" aria-label="Kostenlosen Testlauf auswerten">🧪 Testen</button><button class="af-chip" data-act="plan" aria-label="Planansicht umschalten" aria-pressed="false">▦ Plan</button></div>
+    <button class="af-case-entry" data-act="start-case"><span>NEUER EINSATZ</span><b>Notruf: Klasse 2B ↗</b></button>
+    <div class="af-case-story" data-ui="case-story" hidden></div>
+    <button class="af-inspect" data-act="case-action" hidden>◎ Im Raum messen</button>
+    <div class="af-coach" data-ui="toast" role="status" hidden></div>
+    <div class="af-selection" data-ui="selection" hidden><button class="af-close" data-act="close-info" aria-label="Info schliessen">×</button><b data-ui="info-title"></b><p data-ui="info-text"></p></div>
+    <div class="af-labels" aria-hidden="true"></div>
+    <div class="af-world-actions" data-ui="world-actions" aria-hidden="true"><span data-world-choice="window">Fenster</span><span data-world-choice="boost">Lüftung</span><span data-world-choice="investigate">Untersuchen</span><span data-act="world-action" hidden></span></div>
+    <div class="af-journey" data-ui="journey" hidden><span data-ui="journey-label"></span><button data-act="stop-walk" aria-label="Laufen abbrechen">Stopp ×</button></div>
+    <button class="af-inspect af-visit" data-act="visit-unit">↗ Gerät auswählen</button>
+    <button class="af-inspect" data-act="inspect" hidden>◎ Messpunkt finden</button>
+    <div class="af-legend"><span><i></i>Frische Luft rein</span><span><i></i>Verbrauchte Luft raus</span><small>Fachwörter: Zuluft / Abluft</small></div>
+    <div class="af-camera"><button class="af-icon" data-act="home" aria-label="Kamera zurücksetzen" title="Übersicht">⌂</button><button class="af-icon" data-act="zoom-in" aria-label="Vergrössern">+</button><button class="af-icon" data-act="zoom-out" aria-label="Verkleinern">−</button></div>
+  </section>
+  <section class="af-controls" aria-label="Lüftungssteuerung">
+    <div class="af-onboarding" data-ui="onboarding"><span data-ui="tutorial-kicker">DEIN AUFTRAG</span><b data-ui="tutorial-title"></b><p data-ui="tutorial-hint"></p><div class="af-quick-choices" data-ui="quick-choices" hidden><button data-choice="window">🪟 Fenster</button><button data-choice="boost">🌬️ Lüftung</button><button data-choice="investigate">🔧 Untersuchen</button></div><button data-act="tutorial-action">Zum Messpunkt gehen</button></div>
+    <div class="af-flow"><button class="af-step" data-act="less" aria-label="Luftmenge um 5 reduzieren">−</button><button class="af-precision" data-act="precise" hidden><b data-ui="precise-value"></b><small data-ui="precise-mode"></small></button><div data-ui="slider-wrap"><label for="fc05-flow">LUFTMENGE <output data-ui="flow">60 m³/h</output></label><input id="fc05-flow" type="range" min="50" max="190" step="5" value="60" aria-label="Luftmenge in Kubikmeter pro Stunde"></div><button class="af-step" data-act="more" aria-label="Luftmenge um 5 erhöhen">+</button></div>
+    <div class="af-tools" data-ui="tools">
+      <button data-act="silencer"><span class="af-tool-symbol">≋</span><b>Leiser machen</b><small data-ui="sd-cost">CHF 650</small></button>
+      <button data-act="place"><span class="af-tool-symbol">▦</span><b data-ui="place-name">Luftauslass</b><small data-ui="outlet-name">Position A → ändern</small></button>
+      <button data-act="fan"><span class="af-tool-symbol">ϟ</span><b>Ventilator</b><small data-ui="fan-cost">EC · CHF 1'600</small></button>
+    </div>
+    <div class="af-tools" data-ui="class-tools" hidden>
+      <button data-act="technology"><span class="af-tool-symbol">⚙</span><b>Bauteile</b><small data-ui="tech-count">Luft regeln · Lärm senken · Strom sparen</small></button>
+      <button data-act="outlets"><span class="af-tool-symbol">⊞</span><b>Auslässe</b><small data-ui="outlet-count">1 eingebaut</small></button>
+      <button data-act="study"><span class="af-tool-symbol">▱</span><b>Raumplan</b><small data-ui="study-count">0 / 3 berechnet</small></button>
+    </div>
+    <div class="af-tools" data-ui="technology" hidden>
+      <button data-act="regulator"><span class="af-tool-symbol">⊙</span><b>Luft genau einstellen</b><small data-ui="vr-cost">CHF 450</small></button>
+      <button data-act="class-silencer"><span class="af-tool-symbol">≋</span><b>Leiser machen</b><small data-ui="class-sd-cost">CHF 650</small></button>
+      <button data-act="class-fan"><span class="af-tool-symbol">ϟ</span><b>Strom sparen</b><small data-ui="class-fan-cost">CHF 1'600</small></button>
+    </div>
+    <div class="af-tools af-outlets" data-ui="outlets" hidden>
+      <button data-act="remove-outlet" aria-label="Einen Luftauslass entfernen"><span class="af-tool-symbol">−</span><b>Ausbauen</b><small>+ CHF 350</small></button>
+      <div class="af-port-info"><b data-ui="port-total">1 Luftauslass</b><small data-ui="port-flow">120 m³/h je</small></div>
+      <button data-act="add-outlet" aria-label="Einen Luftauslass hinzufügen"><span class="af-tool-symbol">+</span><b>Einbauen</b><small>CHF 350</small></button>
+    </div>
+    <div class="af-tools af-study" data-ui="study" hidden>
+      <button data-answer="0"></button><button data-answer="1"></button><button data-answer="2"></button>
+    </div>
+    <div class="af-tools af-sites" data-ui="sites" hidden>
+      <button data-site="0"><span class="af-tool-symbol">A</span><b>Am Tisch</b><small>Direkt über dem Team</small></button>
+      <button data-site="1"><span class="af-tool-symbol">B</span><b>Mittelgang</b><small>Lang · mehr Komfort</small></button>
+      <button data-site="2"><span class="af-tool-symbol">C</span><b>Am Fenster</b><small>Kurz · weniger Strom</small></button>
+    </div>
+    <div class="af-tools af-routes" data-ui="routes" hidden>
+      <button data-route="0"><span class="af-tool-symbol">×</span><b>Direkt</b><small>CHF 0 · blockiert</small></button>
+      <button data-route="1"><span class="af-tool-symbol">↱</span><b>Umfahren</b><small>CHF 450 · länger</small></button>
+      <button data-route="2"><span class="af-tool-symbol">↳</span><b>Unterfahren</b><small>CHF 220 · tiefer</small></button>
+    </div>
+    <div class="af-mission"><div><b data-ui="mission">Das Team braucht frische Luft</b><p data-ui="hint">Schiebe die Luftmenge nach rechts. Was passiert?</p><p class="af-effect" data-ui="effect" hidden></p></div><button class="af-check" data-act="check" disabled>Prüfen</button><button class="af-check af-cancel" data-act="cancel-place" hidden>Zurück</button></div>
+  </section>
+  <div class="af-overlay" data-ui="modal" hidden role="dialog" aria-modal="true" aria-labelledby="fc05-modal-title">
+    <div class="af-modal-card"><button class="af-close" data-act="close-modal" aria-label="Fenster schliessen">×</button><div class="af-eyebrow" data-ui="modal-tag">FLOWCRAFT · SPIELHILFE</div><h2 id="fc05-modal-title">Dein erster Lüftungsauftrag</h2><div data-ui="modal-content"></div><div class="af-modal-actions" data-ui="modal-actions"></div></div>
+  </div>
+  <div class="af-flow-flight" data-ui="flow-flight" hidden aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="af-sr" data-ui="live" aria-live="polite"></div>
+</div>
+
+<style>
+#flowcraft{--ink:#142c36;--muted:#9fb5bb;--cyan:#7de7e0;--panel:#102a34;--line:#2a424b;--good:#8ee0bd;--warn:#f4c474;--bad:#f3957f;position:relative;isolation:isolate;display:grid;grid-template-rows:54px 78px minmax(0,1fr) auto;width:100%;height:clamp(430px,calc(100svh - 112px),790px);max-width:1180px;margin:auto;overflow:hidden;border:1px solid #324b54;border-radius:20px;background:var(--panel);color:#edf6f3;font:13px/1.35 system-ui,-apple-system,'Segoe UI',sans-serif;box-sizing:border-box;color-scheme:dark;user-select:none;-webkit-user-select:none;overscroll-behavior:contain}
+#flowcraft *,#flowcraft *:before,#flowcraft *:after{box-sizing:border-box}
+#flowcraft [hidden]{display:none!important}
+#flowcraft button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;border:0;margin:0;letter-spacing:normal;text-transform:none}
+#flowcraft button:focus-visible,#flowcraft input:focus-visible,#flowcraft canvas:focus-visible{outline:3px solid var(--cyan);outline-offset:-3px}
+#flowcraft button:active:not(:disabled){transform:scale(.96)}
+#flowcraft button:disabled{cursor:default;opacity:.44}
+#flowcraft .af-head{display:flex;gap:5px;align-items:center;padding:5px 9px;z-index:4}
+#flowcraft .af-brand{display:flex;align-items:center;gap:7px;flex:1;min-width:96px}
+#flowcraft .af-brand b{font-size:17px;letter-spacing:1px;font-weight:850;line-height:1}
+#flowcraft .af-brand small{display:block;color:#b7d2d7;font-size:10px;letter-spacing:0;margin-top:4px;white-space:nowrap}
+#flowcraft .af-logo{width:18px;display:grid;gap:4px;transform:skew(-15deg)}
+#flowcraft .af-logo i{display:block;height:3px;background:var(--cyan);border-radius:5px}
+#flowcraft .af-logo i:first-child{width:12px}#flowcraft .af-logo i:last-child{width:14px}
+#flowcraft .af-money{padding-right:3px;white-space:nowrap;text-align:right}
+#flowcraft .af-money small{display:block;font-size:8px;letter-spacing:.6px;color:var(--muted)}
+#flowcraft .af-money b{font-size:12px;color:#dbefce}
+#flowcraft .af-icon{width:44px;height:44px;flex:0 0 44px;background:transparent;border-radius:10px;font-size:20px;font-weight:500}
+#flowcraft .af-meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:0 8px 7px;z-index:3}
+#flowcraft .af-meter{--status:var(--bad);text-align:left;min-width:0;position:relative;background:#1b3640;border:1px solid #34505a;border-radius:11px;padding:5px 7px 6px;box-shadow:inset 0 -2px var(--status)}
+#flowcraft .af-meter[data-quality="good"]{--status:var(--good)}
+#flowcraft .af-meter[data-quality="warn"]{--status:var(--warn)}
+#flowcraft .af-meter[data-quality="paused"]{--status:#a5b6bd;background:#20343e}
+#flowcraft .af-meter>span{display:flex;align-items:center;justify-content:space-between;color:#c8dadd;font-size:11px;margin-bottom:1px}
+#flowcraft .af-meter i{font-size:10px;line-height:13px;font-style:normal;color:var(--status);font-weight:800}
+#flowcraft .af-meter>b{font-size:19px;color:var(--status);font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-.5px}
+#flowcraft .af-meter>em{font-size:10px;font-style:normal;color:#b4cacf;margin-left:3px;white-space:nowrap}
+#flowcraft .af-meter[data-metric="draft"]>b{font-size:16px;letter-spacing:-.7px}
+#flowcraft .af-meter[data-metric="draft"]>em{font-size:8px;margin-left:2px}
+#flowcraft .af-meter>small{display:block;font-size:9px;color:#a5bec4;line-height:1.3;margin-top:1px}
+#flowcraft .af-world{min-height:0;overflow:hidden;position:relative;background:#dde8e8;border-radius:14px 14px 0 0;margin:0 4px;color:var(--ink)}
+#flowcraft canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#flowcraft canvas:active{cursor:grabbing}
+#flowcraft .af-world-top{position:absolute;top:8px;left:9px;right:9px;display:flex;justify-content:space-between;pointer-events:none;gap:5px}
+#flowcraft .af-chip{background:#f7fbf6ed!important;border:1px solid #a9c2c4!important;box-shadow:0 2px 7px #28464c10;color:#294b54;padding:7px 10px;border-radius:10px;font-size:11px;font-weight:700;line-height:1.3;min-height:34px}
+#flowcraft button.af-chip{pointer-events:auto;min-height:44px;color:#294b54}
+#flowcraft button.af-chip[aria-pressed="true"]{background:#244e59!important;color:#fff}
+#flowcraft .af-world-top>span{align-self:flex-start}
+#flowcraft .af-camera{position:absolute;right:5px;bottom:7px;display:flex;background:#f7fbf3e8;border:1px solid #aac2c3;border-radius:12px;box-shadow:0 2px 10px #19384012}
+#flowcraft .af-camera .af-icon{color:#23454d;width:44px;flex-basis:44px;height:44px}
+#flowcraft .af-legend{position:absolute;left:10px;bottom:9px;color:#426471;font-size:10px;pointer-events:none;line-height:1.35}
+#flowcraft .af-legend>span{display:inline-flex;align-items:center;margin-right:8px;gap:4px;font-weight:600}
+#flowcraft .af-legend i{width:7px;height:7px;border-radius:50%;background:#1babc4}
+#flowcraft .af-legend>span:nth-child(2) i{background:#cf8450}
+#flowcraft .af-legend>small{display:block;font-size:9px;margin-top:2px}
+#flowcraft .af-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#flowcraft .af-bubble{position:absolute;transform:translate(-50%,-100%);padding:4px 7px;background:#fffefaee;border:1px solid #b3c6c8;border-radius:9px 9px 9px 2px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 5px #26444d12;line-height:1.3;pointer-events:none;color:#304d53}
+#flowcraft .af-bubble[data-mood="bad"]{color:#8d5034;background:#fff2e3ee;border-color:#dcb293}
+#flowcraft .af-beam-label{background:#fff0d0;color:#914c31;border-color:#d38c58;z-index:2}
+#flowcraft .af-beam-label[data-clear="true"]{background:#e3f8e8;color:#27674f;border-color:#73ac88}
+#flowcraft .af-bubble.af-point{pointer-events:auto;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:#b9f3ecf0;border:2px solid #1b8394;font-size:16px;box-shadow:0 3px 10px #24595a33;transform:translate(-50%,-50%)}
+#flowcraft .af-coach{position:absolute;top:61px;left:50%;transform:translateX(-50%);max-width:calc(100% - 30px);min-width:220px;text-align:center;background:#123d46ef;color:#e9fff8;padding:10px 14px;border-radius:12px;font-weight:650;font-size:12px;box-shadow:0 4px 16px #173d4530;z-index:5;pointer-events:none}
+#flowcraft .af-selection{position:absolute;z-index:7;left:10px;right:10px;top:61px;max-width:410px;background:#fcfdf8f5;border:1px solid #9bb7bc;padding:12px 46px 12px 13px;border-radius:14px;box-shadow:0 5px 20px #1e40481a;color:#203f48}
+#flowcraft .af-selection b{font-size:14px}
+#flowcraft .af-selection p{font-size:12px;line-height:1.45;margin:5px 0 0;color:#49646d}
+#flowcraft .af-close{position:absolute;right:4px;top:4px;background:transparent;min-width:44px;min-height:44px;font-size:24px!important;color:inherit;border-radius:9px}
+#flowcraft .af-controls{padding:7px 9px 8px;background:var(--panel);display:grid;gap:6px;z-index:4;min-width:0}
+#flowcraft .af-flow{display:flex;align-items:center;gap:7px;height:47px}
+#flowcraft .af-flow>div{flex:1;min-width:0}
+#flowcraft .af-flow label{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1px;color:#aac6ca;line-height:15px}
+#flowcraft output{font-size:13px;letter-spacing:0;color:#ebfff5;font-weight:750;font-variant-numeric:tabular-nums}
+#flowcraft .af-step{background:#24414b;border:1px solid #3b5660;width:44px;height:44px;border-radius:11px;font-size:22px;flex-shrink:0}
+#flowcraft input[type="range"]{appearance:none;-webkit-appearance:none;background:transparent;width:100%;height:30px;cursor:ew-resize;display:block;margin:0;touch-action:none;outline-offset:2px}
+#flowcraft input[type="range"]::-webkit-slider-runnable-track{height:7px;border-radius:8px;background:linear-gradient(to right,#7de7e0 var(--fill,7.14%),#365461 var(--fill,7.14%))}
+#flowcraft input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;height:24px;width:24px;border-radius:50%;background:#c9fff1;border:3px solid #53c6c3;box-shadow:0 1px 4px #0005;margin-top:-8.5px}
+#flowcraft input[type="range"]::-moz-range-track{height:7px;border-radius:8px;background:#365461}
+#flowcraft input[type="range"]::-moz-range-progress{height:7px;background:#7de7e0;border-radius:8px}
+#flowcraft input[type="range"]::-moz-range-thumb{height:19px;width:19px;border-radius:50%;background:#c9fff1;border:3px solid #53c6c3}
+#flowcraft .af-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#flowcraft .af-tools>button{height:66px;background:#1b3944;border:1px solid #3e5c65;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:3px 1px;min-width:0;position:relative}
+#flowcraft .af-tool-symbol{color:#8fe5db;font-size:19px;line-height:21px;font-weight:700}
+#flowcraft .af-tools b{font-size:13px;white-space:nowrap;font-weight:650}
+#flowcraft .af-tools small{font-size:10.5px;color:#c6dce0;white-space:nowrap;line-height:1.4}
+#flowcraft .af-tools button[data-installed="true"]{border-color:#76c6a7;background:#24483f}
+#flowcraft .af-tools button[data-installed="true"]:after{content:'✓';position:absolute;right:6px;top:4px;color:#9eebc2;font-size:11px}
+#flowcraft .af-routes button[data-route="0"]{border-color:#9a6555}
+#flowcraft .af-routes button[data-route="0"] .af-tool-symbol{color:#ef9a80}
+#flowcraft .af-routes button[data-route="0"][data-installed="true"]{background:#543a35}
+#flowcraft .af-routes button[data-route="0"][data-installed="true"]:after{content:'!';color:#ffb09a}
+#flowcraft .af-tools button.af-nudge{border-color:#f2c789;box-shadow:0 0 0 1px #f2c78933}
+#flowcraft .af-mission{display:flex;align-items:center;gap:8px;height:60px;min-height:60px;padding:1px 0}
+#flowcraft .af-mission>div{min-width:0;flex:1}
+#flowcraft .af-mission b{font-size:12.5px;line-height:1.3;display:block}
+#flowcraft .af-mission p{font-size:11.5px;line-height:1.35;color:#c1d8dc;margin:3px 0 0;min-height:15px}
+#flowcraft .af-mission p.af-effect{color:#a8f2d9}
+#flowcraft .af-check{background:#7de7cb;color:#113a3f;font-size:12px;font-weight:750;padding:0 12px;height:44px;border-radius:11px;flex-shrink:0}
+#flowcraft .af-check:disabled{background:linear-gradient(to right,#426d63 var(--ready,0%),#32525c var(--ready,0%));color:#c5dadd;opacity:.85}
+#flowcraft .af-cancel{background:#315461;color:#e2f3f4}
+#flowcraft .af-overlay{position:absolute;inset:0;z-index:20;background:#051c28a6;display:flex;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(3px)}
+#flowcraft .af-modal-card{position:relative;background:#f5faf4;color:#20414a;border-radius:19px;padding:25px 23px 22px;width:100%;max-width:440px;max-height:100%;overflow-y:auto;box-shadow:0 12px 50px #001f4155;user-select:text}
+#flowcraft .af-eyebrow{font-size:10px;letter-spacing:1.3px;font-weight:800;color:#527b7e;margin-bottom:9px;padding-right:25px}
+#flowcraft h2{font-size:25px;font-weight:780;line-height:1.15;letter-spacing:-.6px;margin:0 0 14px;color:#173840}
+#flowcraft .af-modal-card p{font-size:13px;line-height:1.55;margin:0 0 12px;color:#48666e}
+#flowcraft .af-modal-card .af-note{font-size:11px;background:#e3ede8;color:#526d70;padding:11px;border-radius:10px;margin-top:14px}
+#flowcraft .af-modal-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+#flowcraft .af-modal-actions button{min-height:44px;border-radius:10px;padding:10px 14px;background:#165b64;color:#f1fff9;font-weight:700;font-size:12px}
+#flowcraft .af-modal-actions button+button{background:#dcece7;color:#254e54}
+#flowcraft .af-report{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}
+#flowcraft .af-report>div{padding:10px;background:#e1efea;border-radius:11px;font-size:11px;color:#3a5f60}
+#flowcraft .af-report b{display:block;font-size:18px;color:#1b5a4f;margin-top:2px}
+#flowcraft .af-badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+#flowcraft .af-badges span{border:1px solid #9ec8b5;border-radius:8px;background:#e2f2e9;color:#245745;padding:6px 9px;font-size:12px;font-weight:700}
+#flowcraft .af-first-action{border-radius:12px;background:#244a4f;box-shadow:0 0 0 2px #78d7cc;padding:0 3px}
+#flowcraft .af-first-action output{color:#bcffe7}
+#flowcraft .af-chip[data-ready="true"]{background:#cef4db!important;border-color:#489a73!important}
+#flowcraft .af-achieved{animation:af-achieved .6s ease-out}
+@keyframes af-achieved{40%{background:#356052;box-shadow:inset 0 -3px #9cf1c5,0 0 0 2px #a8efd480}100%{background:#1b3640}}
+#flowcraft .af-sr{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}
+#flowcraft:fullscreen{height:100dvh;max-width:none;border:0;border-radius:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+#flowcraft.af-standalone{height:100vh;height:100dvh;max-width:none;border-radius:0;border:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+#flowcraft.af-wide{grid-template-columns:minmax(0,1fr) 320px;grid-template-rows:54px 78px minmax(0,1fr)}
+#flowcraft.af-wide .af-head{grid-column:1/3;grid-row:1}
+#flowcraft.af-wide .af-world{grid-column:1;grid-row:2/4;margin:0 0 4px 4px;border-radius:14px}
+#flowcraft.af-wide .af-meters{grid-column:2;grid-row:2}
+#flowcraft.af-wide .af-controls{grid-column:2;grid-row:3;align-content:start;gap:8px}
+#flowcraft.af-wide .af-meter{padding-left:5px;padding-right:4px}
+#flowcraft.af-wide .af-meter>b{font-size:16px}
+#flowcraft.af-wide .af-meter>em{font-size:8px;margin-left:1px}
+#flowcraft.af-short .af-world-top{top:5px}
+#flowcraft.af-short .af-legend>small{display:none}
+#flowcraft.af-short .af-controls{gap:4px;padding-top:4px;padding-bottom:5px}
+#flowcraft.af-short .af-mission{min-height:43px}
+#flowcraft.af-short:not(.af-wide){grid-template-rows:54px 63px minmax(0,1fr) auto}
+#flowcraft.af-short:not(.af-wide) .af-meter>small{display:none}
+@media(max-width:365px){#flowcraft .af-logo{display:none}#flowcraft .af-brand{min-width:120px}#flowcraft .af-head{gap:2px;padding-left:8px;padding-right:5px}#flowcraft .af-meter>b{font-size:17px}#flowcraft .af-meter>em{font-size:9px;margin-left:2px}#flowcraft .af-tools b{font-size:12px}#flowcraft .af-tools small{font-size:10px}#flowcraft .af-sites small{white-space:normal;font-size:10px;line-height:1.1;padding:0 4px}#flowcraft .af-mission{min-height:58px}}
+@media(prefers-reduced-motion:reduce){#flowcraft *,#flowcraft *:before,#flowcraft *:after{animation:none!important;transition:none!important}}
+
+/* Classroom controls reuse one palette row to keep the complete room in view. */
+#flowcraft .af-money{background:transparent;min-height:44px;border-radius:8px}
+#flowcraft .af-money[data-over="true"] b{color:#ffab95}
+#flowcraft .af-money[data-over="true"]{background:#633e35}
+#flowcraft .af-precision{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:44px;border-radius:10px;background:#244a4f;border:1px solid #76c6bb;min-width:0}
+#flowcraft .af-precision b{font-size:15px;line-height:19px}
+#flowcraft .af-precision small{font-size:10px;color:#c5ece1;line-height:13px}
+#flowcraft .af-precision[data-locked="true"]{border-color:#e3bc79;background:#4b4938}
+#flowcraft .af-port-info{height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#24483f;border:1px solid #6aaf96;border-radius:11px;gap:4px;min-width:0}
+#flowcraft .af-port-info b{font-size:13px}#flowcraft .af-port-info small{font-size:10px;color:#b9e5d5;white-space:normal;text-align:center}
+#flowcraft .af-study button{font-weight:750;font-size:16px;color:#c4f9ed;white-space:normal;padding:4px}
+#flowcraft .af-study button[data-answer-state="wrong"]{background:#633e35;border-color:#efa28c;color:#ffe3d8}
+#flowcraft .af-study button[data-answer-state="correct"]{background:#285c47;border-color:#a0e4b7}
+#flowcraft .af-number-label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+#flowcraft .af-number{display:block;width:100%;height:48px;background:#fff;color:#173840;border:2px solid #609c91;border-radius:9px;padding:8px 12px;font:700 22px system-ui;user-select:text;color-scheme:light}
+#flowcraft .af-input-error{color:#a34c32;margin-top:6px;display:block;min-height:18px;font-size:12px}
+#flowcraft .af-cost-list{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:12px;margin:12px 0}
+#flowcraft .af-cost-list b{text-align:right;font-variant-numeric:tabular-nums}
+#flowcraft .af-budget-bad{color:#a04430!important;background:#ffe5d9;padding:9px;border-radius:8px}
+#flowcraft .af-plan-stamp{background:#dff2e9;padding:10px;border-radius:9px;font-weight:650}
+#flowcraft .af-outlet-label{font-size:10px;border-radius:6px;padding:2px 5px;color:#1a5e68;background:#e6ffffe8;border-color:#5ea9b6}
+#flowcraft .af-mission[data-alert="true"] b{color:#ffb297}
+
+/* 0.8: a brighter workshop world with crisp, game-like controls. */
+#flowcraft{--panel:#142344;--cyan:#67e4ff;--line:#365786;--good:#8ff0ba;--warn:#ffce70;--bad:#ffab99;background:var(--panel);border-color:#3c6093}
+#flowcraft .af-head{background:#101c37}
+#flowcraft .af-meter{background:#203655;border-color:#42628b}
+#flowcraft .af-world{border:1px solid #769fd4;background:#cee7ff}
+#flowcraft .af-world-top{align-items:flex-start}
+#flowcraft .af-chip{font-size:12px;padding:8px;white-space:nowrap;border-radius:8px;min-height:44px;display:flex;align-items:center;justify-content:center}
+#flowcraft .af-world-top>span{flex:0 1 auto;justify-content:flex-start;font-variant-numeric:tabular-nums}
+#flowcraft .af-world-top .af-trial{margin-left:auto}
+#flowcraft button.af-trial{background:#eaf6f0;color:#345260;border-color:#9cbcc2;box-shadow:none}
+#flowcraft .af-step,#flowcraft .af-tools>button{background:#203b61;border-color:#486c9d;box-shadow:0 3px 0 #0b182e;border-radius:10px}
+#flowcraft .af-tools>button[data-installed="true"]{background:#245447;border-color:#83d6b2}
+#flowcraft .af-tools>button.af-nudge{border-color:#ffdb83;box-shadow:0 0 0 2px #ffdb8340,0 3px 0 #0b182e}
+#flowcraft .af-tool-symbol{color:#7ce5ff}
+#flowcraft .af-tools b{font-weight:750}
+#flowcraft .af-check{background:#ffda78;color:#263348;box-shadow:0 3px 0 #946323;font-weight:800}
+#flowcraft .af-cancel{background:#315179;color:#f0f6ff;box-shadow:0 3px 0 #0b182e}
+#flowcraft .af-first-action{background:#254663;box-shadow:0 0 0 2px #ffdc84}
+#flowcraft .af-precision{background:#244760;border-color:#79c7f1}
+#flowcraft .af-precision[data-locked="true"]{background:#344764;border-color:#728db0}
+#flowcraft .af-mission b{color:#f7df9b}
+#flowcraft .af-bubble{border-width:2px;box-shadow:0 3px 0 #31547c20}
+#flowcraft .af-modal-card{background:#f3f7ff;color:#20365b;border:2px solid #b7ccef;box-shadow:0 14px 50px #08152b88}
+#flowcraft .af-modal-actions button{background:#255fa9;font-size:14px}
+#flowcraft .af-modal-actions button+button{background:#e1eaf6;color:#294974}
+#flowcraft .af-trial-score{display:flex;align-items:center;gap:16px;margin:0 0 14px;color:#203a64}
+#flowcraft .af-trial-score>b{flex-shrink:0;white-space:nowrap;font-size:42px;line-height:1;font-variant-numeric:tabular-nums}
+#flowcraft .af-trial-score small{font-size:22px;color:#6480a4}
+#flowcraft .af-trial-score>span{font-size:14px;line-height:1.5}
+#flowcraft .af-trial-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+#flowcraft .af-trial-card{padding:10px;border:1px solid #dcad97;border-radius:12px;background:#fff0e9;min-width:0}
+#flowcraft .af-trial-card[data-pass="true"]{border-color:#80bda2;background:#e4f6ec}
+#flowcraft .af-trial-card>span{font-weight:750;font-size:14px;color:#654033}
+#flowcraft .af-trial-card[data-pass="true"]>span{color:#205640}
+#flowcraft .af-trial-card>b{display:block;font-size:24px;line-height:1.3;letter-spacing:-.6px;font-variant-numeric:tabular-nums;color:#233851;margin:4px 0}
+#flowcraft .af-trial-card small{font-size:12px;letter-spacing:0;white-space:nowrap}
+#flowcraft .af-trial-card p{font-size:14px;line-height:1.35;margin:0;color:#47556b}
+#flowcraft .af-next-try{border-left:4px solid #dfae36;padding:12px;background:#fff3ce;border-radius:4px 10px 10px 4px}
+#flowcraft .af-next-try>b{font-size:14px;color:#5e4825}
+#flowcraft .af-next-try p{font-size:16px;line-height:1.4;color:#4e4d4d;margin:5px 0 0}
+#flowcraft p.af-trial-compare{font-size:14px;line-height:1.5;color:#355886;padding:10px;background:#e2ecfc;border-radius:10px}
+#flowcraft [data-kind="trial"] .af-modal-card{display:flex;flex-direction:column;overflow:hidden}
+#flowcraft [data-kind="trial"] [data-ui="modal-content"]{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#flowcraft [data-kind="trial"] .af-modal-actions{flex-shrink:0;margin-top:12px;padding-top:10px;border-top:1px solid #c3d3e9}
+#flowcraft [data-kind="trial"] .af-modal-actions button{flex:1 1 130px}
+#flowcraft [data-kind="trial"] h2,#flowcraft [data-kind="trial"] .af-eyebrow{flex-shrink:0}
+@media(max-width:365px){#flowcraft .af-chip{font-size:11px;padding:7px 6px}#flowcraft .af-trial-card>b{font-size:21px}#flowcraft .af-trial-card{padding:8px}#flowcraft .af-modal-card{padding:24px 16px 18px}}
+
+#flowcraft .af-inspect{position:absolute;left:12px;bottom:32px;min-height:44px;max-width:calc(100% - 76px);padding:8px 14px;border:1px solid #ffcf77;border-radius:14px;background:#263c50;color:#ffe3aa;font:700 13px system-ui;box-shadow:0 4px 16px #172f4933;cursor:pointer;z-index:4}
+#flowcraft .af-inspect:disabled{color:#a9f9d9;border-color:#58d9b9}
+
+#flowcraft .af-journey{position:absolute;left:12px;right:12px;bottom:32px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:12px;border:1px solid #6ee8d1;border-radius:14px;background:#18364ded;color:#caffec;font:700 12px system-ui;box-shadow:0 6px 20px #10283c33}
+#flowcraft .af-journey span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#flowcraft .af-journey button{min-width:76px;min-height:44px;color:#caffec;background:#24526a;border:0;border-radius:0 14px 14px 0;font-weight:700}
+#flowcraft .af-inspect[data-ready="true"],#flowcraft .af-visit{border-color:#7bf5d8;color:#baffea;background:#193e53}
+#flowcraft .af-inspect:disabled{opacity:1;color:#fff0c0}
+
+#flowcraft .af-case-entry{position:absolute;top:60px;left:10px;z-index:3;text-align:left;min-height:48px;padding:8px 12px;border-radius:12px;background:#17334ced;color:#effffa;border:1px solid #85e5d0;box-shadow:0 5px 15px #17334c30}
+#flowcraft .af-case-entry span{display:block;font-size:10px;letter-spacing:1px;color:#83ecd2}
+#flowcraft .af-case-entry b{font-size:13px}
+#flowcraft .af-case-story{position:absolute;top:60px;left:10px;right:10px;padding:8px 12px;border-radius:10px;background:#fff6d9ed;color:#29404b;font-size:12px;font-weight:700;pointer-events:none;z-index:3}
+#flowcraft .af-rating{display:grid;gap:7px;text-align:center;padding:16px 8px;margin-bottom:12px;border-radius:16px;background:#e4f7ed;color:#174c4a}
+#flowcraft .af-rating>b{font-size:42px;letter-spacing:7px;color:#aa7000;line-height:1.1}
+#flowcraft .af-rating>strong{font-size:20px}
+#flowcraft .af-rating>span{font-size:12px;line-height:1.6}
+@media(max-height:480px){#flowcraft .af-case-entry{top:54px;padding:5px 10px}#flowcraft .af-case-entry span{display:none}#flowcraft .af-case-story{top:54px;font-size:11px;padding:6px 8px}}
+
+/* Keep dialog actions reachable while long mission reports scroll on phones. */
+#flowcraft .af-modal-card{display:flex;flex-direction:column;overflow:hidden}
+#flowcraft [data-ui="modal-content"]{overflow-y:auto;min-height:0;overscroll-behavior:contain}
+#flowcraft .af-modal-card h2,#flowcraft .af-modal-card .af-eyebrow,#flowcraft .af-modal-actions{flex-shrink:0}
+#flowcraft .af-modal-actions{padding-top:10px;border-top:1px solid #c3d3e9;margin-top:10px}
+
+/* First-run game surface: the dashboard is discovered through physical actions. */
+#flowcraft .af-intro{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#0b1930;color:#d9fff4}
+#flowcraft .af-intro>b{font-size:clamp(28px,7vw,48px);letter-spacing:5px}
+#flowcraft .af-intro>span{font-size:15px;color:#a1c1d9}
+#flowcraft .af-intro button{margin-top:28px;min-height:44px;padding:12px 22px;border-radius:24px;background:#68f3cb;color:#133346;font-weight:800}
+#flowcraft .af-intro-mark{display:grid;gap:7px;margin-bottom:15px;transform:skewX(-18deg)}
+#flowcraft .af-intro-mark i{display:block;width:70px;height:9px;border-radius:5px;background:#65f5d3;animation:fc-intro 1s ease-out both}
+#flowcraft .af-intro-mark i:nth-child(2){width:90px;animation-delay:.12s}#flowcraft .af-intro-mark i:nth-child(3){width:50px;animation-delay:.24s}
+@keyframes fc-intro{from{opacity:0;transform:translateX(-35px)}to{opacity:1;transform:translateX(0)}}
+#flowcraft .af-xp{font-size:11px;font-weight:850;white-space:nowrap;color:#b4ffe1;background:#204b52;border:1px solid #47766d;padding:6px;border-radius:9px}
+#flowcraft .af-opening-line{position:absolute;top:16px;left:12px;right:12px;z-index:3;max-width:460px;padding:12px 15px;background:#fff6dded;color:#273d4d;border-radius:14px;font-weight:650;font-size:14px;pointer-events:none}
+#flowcraft .af-guide-marker{position:absolute;z-index:6;transform:translate(-50%,-100%);min-height:44px;padding:8px 12px;border:2px solid #a3ffe0;border-radius:22px;background:#164d59;color:#effff3;box-shadow:0 0 0 5px #57eec332;font-size:12px;font-weight:850;white-space:nowrap;animation:fc-guide 1.8s ease-in-out infinite}
+@keyframes fc-guide{50%{box-shadow:0 0 0 10px #57eec311}}
+#flowcraft .af-reward{position:absolute;z-index:8;left:50%;bottom:88px;transform:translateX(-50%);max-width:90%;width:max-content;padding:10px 16px;border-radius:24px;background:#fff0b9;color:#3d4b37;border:2px solid #e6bb5a;font-size:14px;font-weight:850;box-shadow:0 5px 20px #20334433;pointer-events:none}
+#flowcraft .af-onboarding{display:grid;gap:6px;max-width:620px;width:100%;margin:auto;padding:10px 12px;color:#f4fbff}
+#flowcraft .af-onboarding>span{font-size:10px;letter-spacing:1.5px;color:#82e5cf}
+#flowcraft .af-onboarding>b{font-size:20px;line-height:1.2}#flowcraft .af-onboarding p{margin:0;font-size:13px;line-height:1.4;color:#bcd2e3}
+#flowcraft .af-onboarding button{min-height:48px;margin-top:6px;border-radius:13px;background:#ffdc79;color:#283c4d;font-size:15px;font-weight:800;box-shadow:0 3px 0 #ac853d}
+#flowcraft .af-quick-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#flowcraft[data-first-impression="true"]{grid-template-rows:54px 0 minmax(0,1fr) auto}
+#flowcraft[data-first-impression="true"] .af-meters,
+#flowcraft[data-first-impression="true"] .af-money,
+#flowcraft[data-first-impression="true"] .af-xp,
+#flowcraft[data-first-impression="true"] .af-world-top,
+#flowcraft[data-first-impression="true"] .af-flow,
+#flowcraft[data-first-impression="true"] .af-tools,
+#flowcraft[data-first-impression="true"] .af-mission{display:none!important}
+#flowcraft .af-quick-choices[hidden]{display:none}
+#flowcraft .af-world-actions{position:absolute;inset:0;z-index:6;pointer-events:none}
+#flowcraft .af-world-actions span{position:absolute;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);min-width:78px;min-height:44px;padding:6px 9px;border-radius:999px;border:1px solid #b8ffe8;background:#123c50e8;color:#effff8;font-size:11px;font-weight:850;box-shadow:0 0 0 4px #65f0cf22,0 4px 12px #071b2d88;pointer-events:none}
+
+#flowcraft .af-world-actions [data-act="world-action"]{background:#ffe083;color:#263b49;border-color:#fff0b8;min-width:116px}
+#flowcraft:not([data-first-impression="true"]) .af-world-actions{display:none}
+#flowcraft[data-first-impression="true"] .af-onboarding{padding-top:7px;padding-bottom:8px}
+#flowcraft[data-first-impression="true"] .af-onboarding p{font-size:12px}
+@media(max-width:430px){#flowcraft[data-first-impression="true"] .af-quick-choices{grid-template-columns:repeat(3,minmax(0,1fr))}#flowcraft[data-first-impression="true"] .af-quick-choices button{font-size:11px;padding:5px 3px}}
+#flowcraft .af-quick-choices button{padding:8px 6px;background:#e9f4ff;box-shadow:0 3px 0 #7c9bbd;font-size:13px}
+#flowcraft .af-quick-choices button[data-discovered="true"]{background:#dff8e9;border-color:#61a982;box-shadow:0 3px 0 #61a982}
+#flowcraft .af-quick-choices button[data-discovered="true"]:after{content:'  ✓';color:#197056;font-weight:950}
+#flowcraft .af-world-actions [data-discovered="true"]{border-color:#8dffca;background:#195b51e8;color:#eafff3}
+#flowcraft .af-route-progress{display:grid;gap:3px;margin:8px 0 4px;padding:10px 12px;border-radius:12px;background:#e9f2ff;color:#24445e;text-align:center}
+#flowcraft .af-route-progress b{font-size:15px}#flowcraft .af-route-progress span{font-size:12px}
+#flowcraft[data-first-impression="true"] .af-head .af-xp,#flowcraft[data-first-impression="true"] .af-money{display:none!important}
+@media(max-width:430px){#flowcraft .af-quick-choices{grid-template-columns:1fr}#flowcraft .af-quick-choices button{min-height:44px;margin-top:2px}}
+#flowcraft:not([data-tutorial="done"]){grid-template-columns:minmax(0,1fr);grid-template-rows:54px 78px minmax(0,1fr) auto}
+#flowcraft:not([data-tutorial="done"]) .af-head{grid-row:1;grid-column:1}
+#flowcraft:not([data-tutorial="done"]) .af-meters{grid-row:2;grid-column:1;display:flex;justify-content:center}
+#flowcraft:not([data-tutorial="done"]) .af-meter{min-width:120px;max-width:260px;flex:1}
+#flowcraft:not([data-tutorial="done"]) .af-world{grid-row:3;grid-column:1;margin:0 4px}
+#flowcraft:not([data-tutorial="done"]) .af-controls{grid-row:4;grid-column:1;padding:4px 8px 12px}
+#flowcraft:not([data-tutorial="done"]) .af-controls> :not(.af-onboarding),#flowcraft:not([data-tutorial="done"]) .af-world-top,#flowcraft:not([data-tutorial="done"]) .af-case-entry,#flowcraft:not([data-tutorial="done"]) .af-visit,#flowcraft:not([data-tutorial="done"]) .af-legend,#flowcraft:not([data-tutorial="done"]) .af-money{display:none!important}
+#flowcraft[data-tutorial="measure"]{grid-template-rows:54px 0 minmax(0,1fr) auto}
+#flowcraft[data-tutorial="measure"] .af-meters{visibility:hidden;overflow:hidden;padding:0}
+#flowcraft[data-tutorial="distribute"] .af-meter{min-width:0}
+#flowcraft:not([data-tutorial="done"]) .af-meter[data-quality="bad"]{border-color:#ffa978;background:#582f35}
+#flowcraft:not([data-tutorial="done"]) .af-meter[data-quality="bad"]>span:after{content:' · ZU HOCH';font-size:11px;color:#ffc9a4}
+@media(max-height:480px) and (min-width:600px){#flowcraft:not([data-tutorial="done"]){grid-template-columns:1fr 290px;grid-template-rows:54px 78px 1fr}#flowcraft:not([data-tutorial="done"]) .af-head{grid-column:1/3}#flowcraft:not([data-tutorial="done"]) .af-world{grid-column:1;grid-row:2/4}#flowcraft:not([data-tutorial="done"]) .af-meters{grid-column:2;grid-row:2}#flowcraft:not([data-tutorial="done"]) .af-controls{grid-column:2;grid-row:3}#flowcraft .af-onboarding>b{font-size:18px}}
+@media(prefers-reduced-motion:reduce){#flowcraft .af-intro-mark i,#flowcraft .af-guide-marker{animation:none}}
+#flowcraft{grid-template-columns:minmax(0,1fr)}
+@media(max-width:400px){#flowcraft .af-brand{min-width:0}#flowcraft .af-brand b{font-size:12px;letter-spacing:.4px}#flowcraft .af-brand small{display:none}#flowcraft .af-logo{display:none}#flowcraft .af-xp{font-size:9px;padding:4px}#flowcraft .af-head{gap:3px;padding:5px}#flowcraft .af-money b{font-size:11px}}
+#flowcraft .af-xp{position:relative;min-width:70px;padding:4px 6px 8px;overflow:hidden;line-height:1.2}
+#flowcraft .af-xp small{display:block;font-size:7px;letter-spacing:.6px}#flowcraft .af-xp b{font-size:11px}
+#flowcraft .af-xp i{position:absolute;bottom:0;left:0;height:3px;width:var(--flow-progress,0%);background:#8dffe0;box-shadow:0 0 8px #7ffff1}
+#flowcraft .af-reward{display:flex;align-items:center;gap:9px;font-size:12px;padding:8px 12px;max-width:min(310px,90%);white-space:normal;bottom:88px}
+#flowcraft .af-buddy{display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;width:34px;height:30px;background:#235266;border:3px solid #6cd7d5;border-radius:11px 4px 11px 4px;transform:rotate(-8deg);box-shadow:-5px 4px 0 -2px #ffb84a}
+#flowcraft .af-buddy i{width:5px;height:8px;border-radius:3px;background:#baffec}
+#flowcraft [data-mood="puzzled"] .af-buddy{transform:rotate(15deg);border-color:#f5b66a}#flowcraft [data-mood="puzzled"] .af-buddy i:last-child{height:3px}
+#flowcraft [data-mood="worried"] .af-buddy i{transform:rotate(-18deg);height:4px}
+#flowcraft [data-mood="happy"] .af-buddy{animation:fc-buddy .5s ease-out 2}
+@keyframes fc-buddy{50%{transform:translateY(-4px) rotate(8deg)}}
+#flowcraft .af-flow-flight{position:absolute;inset:0;z-index:35;pointer-events:none;overflow:hidden}
+#flowcraft .af-flow-flight i{position:absolute;left:0;top:0;width:7px;height:7px;background:#adffe3;border-radius:3px;opacity:0;box-shadow:0 0 9px #74ffdb}
+#flowcraft .af-flying i{animation:fc-flight .65s ease-in both}#flowcraft .af-flying i:nth-child(2){animation-delay:.08s}#flowcraft .af-flying i:nth-child(3){animation-delay:.16s}
+@keyframes fc-flight{0%{opacity:1;transform:translate(var(--fx),var(--fy)) scale(1.6)}90%{opacity:1}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(.5)}}
+#flowcraft .af-board-lead{margin:0 0 10px;color:#526879;font-size:13px}
+#flowcraft .af-mission-board{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#flowcraft .af-mission-board>button{display:grid;grid-template-columns:42px 1fr;grid-template-areas:"icon copy" "status result";gap:5px 10px;min-height:112px;padding:12px;text-align:left;border:1px solid #b8d8d1;border-radius:14px;background:linear-gradient(145deg,#effbf6,#dcefe9);color:#183f49;box-shadow:0 3px 0 #aacbc4}
+#flowcraft .af-mission-board>button:hover,#flowcraft .af-mission-board>button:focus-visible{border-color:#258e83;transform:translateY(-1px)}
+#flowcraft .af-mission-board i{grid-area:icon;display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#173f52;font-style:normal;font-size:22px}
+#flowcraft .af-mission-board span{grid-area:copy;display:grid;align-content:center;gap:2px;min-width:0}
+#flowcraft .af-mission-board span b{font-size:15px;line-height:1.15;text-transform:uppercase}
+#flowcraft .af-mission-board span small{font-size:11px;line-height:1.25;color:#47636c}
+#flowcraft .af-mission-board em{grid-area:status;font-size:9px;font-style:normal;font-weight:900;letter-spacing:.5px;color:#247060}
+#flowcraft .af-mission-board strong{grid-area:result;align-self:end;font-size:11px;color:#8a6500}
+#flowcraft .af-mission-intro{display:grid;justify-items:center;gap:9px;padding:16px 10px;text-align:center;border-radius:16px;background:#e6f6f0;color:#193f49}
+#flowcraft .af-mission-intro span{font-size:42px}#flowcraft .af-mission-intro p{margin:0;font-size:15px}#flowcraft .af-mission-intro b{font-size:20px}
+#flowcraft .af-beam-cues{position:absolute;pointer-events:none;top:60px;left:50%;transform:translateX(-50%);z-index:5;padding:9px 12px;border-radius:12px;color:#263b45;background:#fff1b6;font-weight:850;font-size:12px;white-space:nowrap;box-shadow:0 0 0 4px #ffc55933}
+#flowcraft[data-lesson="planning"] .af-money{display:block!important}
+#flowcraft[data-lesson="planning"][data-panel="study"] .af-controls>.af-study,#flowcraft[data-lesson="planning"][data-panel="technology"] .af-controls>[data-ui="technology"]{display:grid!important}
+#flowcraft[data-lesson="planning"]:not([data-panel="menu"]) .af-controls>.af-mission{display:flex!important}
+#flowcraft[data-lesson="planning"]:not([data-panel="menu"]) .af-check[data-act="check"]{display:none!important}
+#flowcraft[data-tutorial="regulate"] [data-act="class-silencer"],#flowcraft[data-tutorial="regulate"] [data-act="class-fan"]{display:none!important}
+#flowcraft[data-tutorial="regulate"] [data-ui="technology"]{grid-template-columns:1fr}
+#flowcraft[data-lesson="planning"] .af-meter{min-width:0;max-width:none}
+#flowcraft [data-act="trial"]{background:#eaf6f0;color:#345260;box-shadow:none;border:1px solid #9cbcc2}
+#flowcraft .af-case-entry{display:none!important}
+#flowcraft .af-intro-mark:after{content:'';height:4px;width:18px;background:white;position:absolute;top:15px;animation:fc-intro-stream 1.2s ease-in-out both;border-radius:8px;box-shadow:0 0 12px #81f9d7}
+@keyframes fc-intro-stream{from{transform:translateX(-50px);opacity:0}30%{opacity:1}to{transform:translateX(130px);opacity:0}}
+@media(max-width:500px){#flowcraft .af-brand b{font-size:11px}#flowcraft .af-mission-board{grid-template-columns:1fr}#flowcraft .af-mission-board>button{min-height:92px;grid-template-columns:38px 1fr;padding:9px}#flowcraft .af-mission-board i{width:38px;height:38px;font-size:20px}#flowcraft .af-chip{font-size:10px;padding:6px}#flowcraft .af-beam-cues{font-size:10px;top:53px;padding:7px}#flowcraft .af-xp{min-width:65px}}
+/* Mission board stays fully visible at the smallest supported phone sizes. */
+@media(max-width:365px){
+  #flowcraft [data-kind="missions"] .af-modal-card{padding:12px 12px 11px}
+  #flowcraft [data-kind="missions"] .af-eyebrow{margin-bottom:4px}
+  #flowcraft [data-kind="missions"] h2{font-size:20px;margin-bottom:7px}
+  #flowcraft [data-kind="missions"] .af-board-lead{font-size:11px;margin-bottom:5px}
+  #flowcraft [data-kind="missions"] .af-mission-board{gap:4px}
+  #flowcraft [data-kind="missions"] .af-mission-board>button{min-height:60px;grid-template-columns:32px 1fr;gap:2px 7px;padding:5px 7px;border-radius:10px;box-shadow:0 2px 0 #aacbc4}
+  #flowcraft [data-kind="missions"] .af-mission-board i{width:32px;height:32px;border-radius:9px;font-size:17px}
+  #flowcraft [data-kind="missions"] .af-mission-board span b{font-size:12px}
+  #flowcraft [data-kind="missions"] .af-mission-board span small{font-size:9px}
+  #flowcraft [data-kind="missions"] .af-mission-board em{font-size:8px}
+  #flowcraft [data-kind="missions"] .af-mission-board strong{font-size:9px}
+  #flowcraft [data-kind="missions"] .af-modal-actions{margin-top:6px;padding-top:6px}
+}
+@media(max-height:480px) and (min-width:501px){
+  #flowcraft [data-kind="missions"] .af-modal-card{max-width:760px;padding:10px 12px}
+  #flowcraft [data-kind="missions"] .af-eyebrow{margin-bottom:3px}
+  #flowcraft [data-kind="missions"] h2{font-size:20px;margin-bottom:6px}
+  #flowcraft [data-kind="missions"] .af-board-lead{font-size:11px;margin-bottom:5px}
+  #flowcraft [data-kind="missions"] .af-mission-board{grid-template-columns:repeat(3,1fr);gap:6px}
+  #flowcraft [data-kind="missions"] .af-mission-board>button{min-height:68px;grid-template-columns:32px 1fr;gap:2px 7px;padding:6px 8px;border-radius:10px;box-shadow:0 2px 0 #aacbc4}
+  #flowcraft [data-kind="missions"] .af-mission-board i{width:32px;height:32px;border-radius:9px;font-size:17px}
+  #flowcraft [data-kind="missions"] .af-mission-board span b{font-size:12px}
+  #flowcraft [data-kind="missions"] .af-mission-board span small{font-size:9px}
+  #flowcraft [data-kind="missions"] .af-mission-board em{font-size:8px}
+  #flowcraft [data-kind="missions"] .af-mission-board strong{font-size:9px}
+  #flowcraft [data-kind="missions"] .af-modal-actions{margin-top:6px;padding-top:6px}
+}
+@media(max-height:600px){#flowcraft .af-onboarding{padding:6px}#flowcraft .af-onboarding>b{font-size:18px}#flowcraft .af-reward{font-size:11px;padding:5px 9px;bottom:86px}#flowcraft .af-buddy{width:27px;height:25px}}
+@media(prefers-reduced-motion:reduce){#flowcraft .af-buddy,#flowcraft .af-flow-flight i,#flowcraft .af-intro-mark:after{animation:none!important}#flowcraft .af-flow-flight{display:none}}
+#flowcraft .af-flow-flight{z-index:9}
+#flowcraft .af-spatial-arrow{position:absolute;z-index:5;pointer-events:none;transform:translate(-50%,-100%);font-size:25px;font-weight:900;color:#233d50;text-shadow:0 0 5px white;background:#fff1b6e8;border-radius:9px;padding:0 5px;line-height:1.2}
+#flowcraft [data-mood="curious"] .af-buddy{transform:rotate(-18deg)}#flowcraft [data-mood="curious"] .af-buddy i{height:10px}
+#flowcraft [data-ui="beam-down"]{transform:translate(-110%,-100%)}#flowcraft [data-ui="beam-up"]{transform:translate(5%,-70%)}
+
+#flowcraft .af-world-top [data-ui="progress"]{flex:1;min-width:0;max-width:145px;white-space:normal;line-height:1.2}
+
+/* 1.2: close investigation framing and restrained, escalating guidance. */
+#flowcraft .af-planning-reveal{position:absolute;inset:45% 12px auto;z-index:7;text-align:center;padding:12px;background:#14394eeb;color:#caffed;border:1px solid #8af2cc;border-radius:12px;font-size:13px;font-weight:800;pointer-events:none}
+#flowcraft .af-air-reading{position:absolute;top:76px;left:12px;padding:7px 10px;border-radius:9px;background:#163c50ed;color:#c8fff0;font-size:12px;font-weight:800;pointer-events:none;z-index:4}
+#flowcraft[data-view="immersive"] .af-world{border-color:#f0c486}
+#flowcraft[data-view="immersive"] .af-world:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#85481912,transparent 30%,transparent 80%,#63351b12);box-shadow:inset 0 -24px 34px -28px #1e304a}
+#flowcraft[data-guidance="0"] .af-guide-marker,#flowcraft[data-guidance="1"] .af-guide-marker{animation:none}
+#flowcraft[data-guidance="3"] [data-act="tutorial-action"]{box-shadow:0 0 0 3px #a3ffe066}
+#flowcraft[data-tutorial="distribute"] [data-ui="reward"][data-mood="happy"] .af-buddy{transform:rotate(-25deg);animation:fc-breeze .4s ease-in-out 3}
+@keyframes fc-breeze{50%{transform:translateX(5px) rotate(-35deg)}}
+#flowcraft[data-view="immersive"] .af-bubble{font-size:11px}
+@media(max-height:600px){#flowcraft .af-opening-line{font-size:12px;padding:8px 11px;top:9px}#flowcraft .af-air-reading{top:65px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){#flowcraft .af-buddy{animation:none!important}}
+
+#flowcraft [data-mood="draft"] .af-buddy{transform:rotate(-28deg);animation:fc-breeze .4s ease-in-out 3}
+#flowcraft[data-budget-over="true"] .af-money{border:1px solid #ffac8b;background:#6a3543;animation:fc-budget .18s ease-in-out 3}
+@keyframes fc-budget{50%{transform:translateX(3px)}}
+@media(prefers-reduced-motion:reduce){#flowcraft .af-money,#flowcraft [data-mood="draft"] .af-buddy{animation:none!important}}
+
+ #flowcraft[data-tutorial="distribute"] .af-meter>span,#flowcraft[data-lesson="planning"] .af-meter>span{font-size:9px;white-space:nowrap;gap:2px}
+ #flowcraft[data-tutorial="distribute"] .af-meter>span i,#flowcraft[data-lesson="planning"] .af-meter>span i{display:none}
+ #flowcraft[data-tutorial="distribute"] .af-meter[data-quality="bad"]>span:after,#flowcraft[data-lesson="planning"] .af-meter[data-quality="bad"]>span:after{content:'HOCH';font-size:8px;white-space:nowrap}
+
+
+/* Level 1 final layout overrides: remove the legacy meter row and keep choices readable. */
+#flowcraft[data-first-impression="true"]:not([data-tutorial="done"]){grid-template-rows:54px 0 minmax(0,1fr) auto}
+@media(max-height:480px) and (min-width:600px){
+  #flowcraft[data-first-impression="true"]:not([data-tutorial="done"]){grid-template-columns:1fr 290px;grid-template-rows:54px 1fr}
+  #flowcraft[data-first-impression="true"]:not([data-tutorial="done"]) .af-head{grid-column:1/3}
+  #flowcraft[data-first-impression="true"]:not([data-tutorial="done"]) .af-world{grid-column:1;grid-row:2}
+  #flowcraft[data-first-impression="true"]:not([data-tutorial="done"]) .af-controls{grid-column:2;grid-row:2}
+  #flowcraft[data-first-impression="true"] .af-quick-choices{grid-template-columns:1fr}
+  #flowcraft[data-first-impression="true"] .af-quick-choices button{min-height:44px;margin-top:2px;white-space:normal;overflow-wrap:anywhere}
+}
+
+</style>
+<script>
+/* FLOWCRAFT 1.2 — illustrative game assumptions, not design or regulatory values.
+   Keep this model pure: rendering, controls and tests use the same definitions. */
+const FLOWCRAFT_MODEL = (() => {
+  'use strict';
+  const VERSION = '1.7';
+  const LIMITS = Object.freeze({co2:1000, noise:40, draft:.22, power:85});
+  const COSTS = Object.freeze({budget:2500, silencer:650, fan:1600, regulator:450, outlet:350});
+  const ROUTES = Object.freeze([
+    Object.freeze({name:'Direkt',cost:0}),
+    Object.freeze({name:'Umfahren',cost:450}),
+    Object.freeze({name:'Unterfahren',cost:220})
+  ]);
+  const BEAM = Object.freeze({x:0,y:3.03,z:-2.12,w:3.2,h:.62,d:.42});
+  const SITES = Object.freeze([
+    Object.freeze([-2.2,-1.4]),
+    Object.freeze([0,.35]),
+    Object.freeze([2.5,-2.15])
+  ]);
+  const CLASSROOM = Object.freeze({length:8, width:6, height:3, volume:144, airChanges:2, demand:288, people:8, budget:3200,
+    presets:Object.freeze([120,240,360]), referenceFlow:340,
+    slots:Object.freeze([Object.freeze([-2.2,-1.4]),Object.freeze([2.2,1.2]),Object.freeze([2.5,-2.15]),Object.freeze([-3.6,1.8])])});
+  const ASSUMPTIONS = Object.freeze({
+    people:4, outdoorCO2:430, co2LitresPerHour:18,
+    basePressure:350, branchPressurePerMetre:95, silencerPressure:80,
+    oldEfficiency:.28, ecEfficiency:.62, auxiliaryWatts:8,
+    referenceFlow:140, stabilitySeconds:2
+  });
+  const defaults = (mission=2) => mission===2 ? {q:120,sd:false,ec:false,site:0,mission:2,route:0,vr:false,vrActive:false,outlets:1,volumeDone:false,demandDone:false,splitDone:false} : {q:60,sd:false,ec:false,site:mission===1?1:0,mission,route:0};
+  const budget = s => s.mission===2?CLASSROOM.budget:COSTS.budget+(s.mission===1?600:0);
+  function branchPath(s,position=SITES[s.site]) {
+    const [x,z]=position;
+    if(s.mission===1&&s.route===1)return [[2.15,3.03,-2.9],[2.15,3.03,.35],[0,3.03,.35]];
+    if(s.mission===1&&s.route===2)return [[0,3.03,-2.9],[0,3.03,-2.7],[0,2.3,-2.7],[0,2.3,-1.54],[0,3.03,-1.54],[0,3.03,.35]];
+    return [[x,3.03,-2.9],[x,3.03,z]];
+  }
+  const outlets = s => s.mission===2?CLASSROOM.slots.slice(0,s.outlets):[SITES[s.site]];
+  const branchLength = s => {
+    const path=branchPath(s);return path.slice(1).reduce((total,p,i)=>total+Math.hypot(...p.map((v,k)=>v-path[i][k])),0);
+  };
+  // Slab intersection with the actual beam, expanded by the duct's half-size.
+  // This is a game geometry check, not a structural/safety assessment.
+  function intersectsBeam(start,end) {
+    let enter=0,leave=1;
+    const centre=[BEAM.x,BEAM.y,BEAM.z],half=[BEAM.w/2+.175,BEAM.h/2+.15,BEAM.d/2+.175];
+    for(let i=0;i<3;i++){
+      const low=centre[i]-half[i],high=centre[i]+half[i],delta=end[i]-start[i];
+      if(Math.abs(delta)<1e-9){if(start[i]<low||start[i]>high)return false;continue;}
+      const a=(low-start[i])/delta,b=(high-start[i])/delta;
+      enter=Math.max(enter,Math.min(a,b));leave=Math.min(leave,Math.max(a,b));
+      if(enter>leave)return false;
+    }
+    return true;
+  }
+  function connected(s){
+    if(s.mission!==1)return true;
+    const path=branchPath(s);return !path.slice(1).some((p,i)=>intersectsBeam(path[i],p));
+  }
+  const outletHeight=s=>2.76; // Both detours reconnect at normal level.
+  const deliveredFlow = s => s.q*(s.faultMode&&!s.repaired?.45:1);
+  function model(s) {
+    const q=deliveredFlow(s), a=ASSUMPTIONS, classroom=s.mission===2, count=classroom?s.outlets:1, ratio=s.q/(classroom?120:60);
+    const co2=a.outdoorCO2+(classroom?CLASSROOM.people:a.people)*a.co2LitresPerHour*1000/q;
+    // Attenuate fan-transmitted sound only; the outlet still makes flow noise.
+    const fan=(classroom?24:28)+37*Math.log10(ratio)-(s.sd?10:0);
+    const terminal=22+45*Math.log10(q/count/60);
+    const noise=10*Math.log10(10**(fan/10)+10**(terminal/10));
+    // C supplies the clear window strip: cheaper short branch, less draft margin.
+    const draft=classroom?.06+.0009*q/count:[.05+.0022*q, .06+.0009*q, .065+.0011*q][s.site];
+    // Classroom branches operate in parallel: use the longest physical branch (z scale .75).
+    const length=classroom?Math.max(...outlets(s).map(p=>Math.abs(p[1]+2.9)*.75)):branchLength(s);
+    const pressure=(a.basePressure+length*a.branchPressurePerMetre+
+      (s.sd?a.silencerPressure:0)+(classroom&&s.vr?35:0))*(s.q/(classroom?CLASSROOM.referenceFlow:a.referenceFlow))**2;
+    const power=a.auxiliaryWatts+(s.q/3600)*pressure/(s.ec?a.ecEfficiency:a.oldEfficiency);
+    return {co2,noise,draft,power};
+  }
+  const spending = s => (s.faultMode&&s.repaired?100:0)+(s.sd?COSTS.silencer:0)+(s.ec?COSTS.fan:0)+(s.mission===1?ROUTES[s.route||0].cost:0)+(s.mission===2?((s.vr?COSTS.regulator:0)+(s.outlets-1)*COSTS.outlet):0);
+  const planReady = s => (!s.faultMode||(s.roomChecked&&s.filterSeen&&s.repaired)) && (s.mission!==2 || (s.volumeDone&&s.demandDone&&s.splitDone&&s.vr&&s.vrActive&&Math.abs(s.q-CLASSROOM.demand)<=2));
+  const allGood = values => Object.keys(LIMITS).every(k=>values[k]<=LIMITS[k]+1e-7);
+  return Object.freeze({VERSION,LIMITS,COSTS,SITES,CLASSROOM,ASSUMPTIONS,ROUTES,BEAM,defaults,budget,outlets,planReady,branchPath,branchLength,intersectsBeam,connected,outletHeight,deliveredFlow,model,spending,allGood});
+})();
+if (typeof module === 'object' && module.exports) module.exports = FLOWCRAFT_MODEL;
+
+/* FLOWCRAFT 1.6. Standalone game prototype; no dependencies or network requests.
+   The simulation is deliberately simplified and accelerated. Values are game targets,
+   not design standards, prices, CFD results or predictions for a real installation. */
+(() => {
+  'use strict';
+  const root = document.getElementById('flowcraft');
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = 'true';
+  const $ = s => root.querySelector(s), $$ = s => [...root.querySelectorAll(s)];
+  const ui = n => $(`[data-ui="${n}"]`), act = n => $(`[data-act="${n}"]`);
+  const canvas = $('canvas'), ctx = canvas.getContext('2d', { alpha: false });
+  if (!ctx) { ui('hint').textContent = 'Die Zeichenfläche konnte nicht gestartet werden.'; return; }
+  $$('button').forEach(b=>b.type='button');
+  const flow = $('input'), world = $('.af-world');
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b-a)*t;
+  const num = n => Math.round(n).toLocaleString('de-CH');
+  const {SITES,LIMITS,COSTS,CLASSROOM,ASSUMPTIONS,ROUTES,BEAM,defaults} = FLOWCRAFT_MODEL;
+  let state=defaults(), plan=false, placing=false, history=[], completed=false, stable=0;
+  let panel='menu', studyStage=0, studyError=-1, lastTrial=null;
+  const classroom=()=>state.mission===2, planReady=()=>FLOWCRAFT_MODEL.planReady(state);
+  const outletSites=()=>FLOWCRAFT_MODEL.outlets(state);
+  const chapter=()=>[2,3,1][state.mission];
+  let angle=.57, zoom=1, width=390, height=400, scale=30, sx=0, cx=1, sp=.60, cp=.80;
+  let visible=true, modalOpen=false, lastFocus=null, reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let elapsed=0, lastTime=0, lastPaint=0, uiTime=0, toastUntil=0, infoUntil=0, pulse=0;
+  let pulsePoint=[...SITES[0]], pulseKind='site', feedbackUntil=0, interacted=false, approvedBefore=false;
+  let previousQualities={}, celebrate=0, cameraY=0, cameraX=195;
+  let flowPhase=0, fanPhase=0, rotorQ=60, visualSite=[...SITES[0]], sdLift=0;
+  let target, display, noiseSource=null, audio=null, audioGain=null, audioFilter=null, sound=false;
+  let hero={x:3.9,z:2.7,a:.3,path:[],step:0}, resetCount=0;
+  // Navigation intent is separate from installed equipment and its refundable cost.
+  let destination=null, inspectionDone=false, inspectionVisited=false, inspecting=0, reaction=0, inspectionReading=null;
+  const INSPECTION={x:0,z:1.35,radius:1.05};
+  const atInspection=()=>Math.hypot(hero.x-INSPECTION.x,hero.z-INSPECTION.z)<INSPECTION.radius;
+  function updateInspection(){
+    const b=act('inspect');b.hidden=state.mission!==0||!!destination;
+    b.disabled=inspecting>0;
+    b.dataset.ready=String(atInspection()&&inspectionVisited);
+    act('visit-unit').hidden=!classroom()||!!destination||placing||!!state.faultMode;
+    act('start-case').querySelector('b').textContent='Notruf: Klasse 2B '+(medals.rescue?'★'.repeat(medals.rescue):'↗');
+    act('start-case').hidden=true;
+    act('case-action').hidden=!state.faultMode||!!destination||placing;
+    act('case-action').disabled=!!serviceTask;
+    act('case-action').textContent=serviceTask?`${serviceTask.kind==='repair'?'Filter reinigen':'Untersuchen'} · ${Math.round((1-serviceTask.left/(serviceTask.kind==='repair'?1.8:1.2))*100)} %`:!state.roomChecked?'◎ Im Raum messen':!state.repaired?'↗ Störung untersuchen':completed?'★ Einsatz geschafft':'✓ Klasse gerettet?';
+    ui('case-story').hidden=!state.faultMode;
+    ui('case-story').textContent=!state.roomChecked?'Lehrerin: «Der Lüfter läuft. Warum sind alle so müde?»':!state.repaired?'Spur: Luft fehlt unterwegs. Untersuche das Gerät.':completed?'Klasse 2B: «Danke! Jetzt können wir uns konzentrieren.»':'Frische Luft! Beobachte, wie die Klasse sich erholt.';
+    ui('journey').hidden=!destination;
+    if(destination)ui('journey-label').textContent=destination.label+' · unterwegs';
+    b.textContent=inspectionDone?'✓ Messbericht':inspecting>0?`Messen · ${Math.round((1-inspecting/1.2)*100)} %`:atInspection()&&inspectionVisited?'◎ Luftzug messen':'◎ Messpunkt finden';
+  }
+  function inspect(){
+    if(state.mission!==0||inspecting)return;
+    if(inspectionDone){inspectionReport();return;}
+    if(!atInspection()||!inspectionVisited){toast('Bewege dich zum orangefarbenen Messpunkt: Boden antippen oder W A S D.');return;}
+    destination=null;hero.path=[];inspecting=1.2;reaction=1.2;updateInspection();
+  }
+  function inspectionReport(){
+    if(!inspectionReading)return;
+    const r=inspectionReading, draught=r.draft>LIMITS.draft;
+    const changed=r.q!==state.q||r.site!==state.site||r.sd!==state.sd||r.ec!==state.ec;
+    openModal(draught?'Luftzug am Arbeitsplatz':'Dein Messprotokoll','FLOWCRAFT · VOR ORT GEMESSEN',
+      `<div class="af-report"><div>Luftzug<b>${r.draft.toFixed(3)} m/s</b></div><div>CO₂<b>${num(r.co2)} ppm</b></div></div>`+
+      `<p><b>Luftauslass ${'ABC'[r.site]} · ${r.q} m³/h.</b> ${changed?'Deine Anlage wurde seither verändert. Miss nochmals, um den Unterschied zu sehen.':'Messwerte aus dem laufenden Spiel, keine technische Vorschau.'}</p>`+
+      `<p>${draught?'Zu viel Luftzug. Ein Luftauslass im Mittelgang oder am Fenster kann den Arbeitsplatz entlasten.':r.co2>LIMITS.co2?'Der Luftzug passt, aber CO₂ ist noch zu hoch. Mehr Frischluft testen und den Komfort erneut messen.':'Luftzug und CO₂ passen an diesem Messzeitpunkt. Prüfe auch Lärm, Strom und Budget.'} Weniger Luft allein kann CO₂ verschlechtern.</p>`,
+      [['Luftauslass planen',()=>{closeModal();act('place').click();}],['Nochmals messen',()=>{closeModal();if(!atInspection()||!inspectionVisited){toast('Für eine neue Messung zurück zum Messpunkt gehen.');return;}inspectionDone=false;invalidateApproval();inspect();}],['Weiterspielen',closeModal]]);
+  }
+  function cancelJourney(){siteAction=null;serviceTask=null;destination=null;pendingFirstChoice=null;hero.path=[];inspecting=0;updateInspection();syncTutorial();}
+  function approach(point,run,label){
+    siteAction=null;inspecting=0;destination=null;hero.path=[];
+    const id=closestFree(point[0],point[2]);if(id<0)return;
+    const floor=gridPoint(id);pathTo(floor.x,floor.z);
+    destination={...floor,point,run,label};
+    announce('Auf dem Weg: '+label);updateInspection();arrive();
+  }
+  function arrive(){
+    if(!destination)return;
+    if(Math.hypot(hero.x-destination.x,hero.z-destination.z)>.8){
+      if(!hero.path.length){destination=null;toast('Wähle einen freien Zugang.');}return;
+    }
+    const d=destination;destination=null;hero.path=[];hero.a=Math.atan2(d.point[0]-hero.x,d.point[2]-hero.z);reaction=.8;updateInspection();d.run();
+  }
+  // A bounded service story reuses the classroom, installed parts and comfort model.
+  let serviceTask=null, repairBurst=0, lastRating=null;
+  let medals={};
+  try{const saved=JSON.parse(localStorage.getItem('flowcraft-medals-v1')||'{}');for(const key of ['classroom','office','coordination','rescue'])if(Number.isInteger(saved[key])&&saved[key]>=1&&saved[key]<=3)medals[key]=saved[key];}catch(e){}
+  const progressKeys=['level1','classroom','rescue','office','coordination'];
+  let missionProgress={};
+  try{const saved=JSON.parse(localStorage.getItem('flowcraft-progress-v1')||'{}');for(const key of progressKeys)if(saved[key]===true)missionProgress[key]=true;}catch(e){}
+  for(const key of ['classroom','rescue','office','coordination'])if(medals[key])missionProgress[key]=true;
+  function saveProgress(key){missionProgress[key]=true;try{localStorage.setItem('flowcraft-progress-v1',JSON.stringify(missionProgress));}catch(e){}}
+  function ratingMarkup(key){
+    reward('complete',200,'Auftrag gelöst');
+    const frugal=state.faultMode?spending()<=3150:spending()<=budget()*.9;
+    const efficient=target.power<=80&&(!state.faultMode||!state.falseFixes);
+    const stars=1+Number(frugal)+Number(efficient);medals[key]=Math.max(medals[key]||0,stars);lastRating={key,stars,frugal,efficient};
+    saveProgress(key);
+    showBeat(stars===3?'Meisterhaft! Drei Sterne.':'Auftrag geschafft!','happy',2);
+    try{localStorage.setItem('flowcraft-medals-v1',JSON.stringify(medals));}catch(e){}
+    return `<div class="af-rating"><b aria-label="${stars} von 3 Sternen">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</b><small>${stars} / 3 STERNE · ${xp} / ${FLOW_MAX[key]} FLOW</small><strong>${stars===3?'Meisterhaft gelöst!':stars===2?'Starker Einsatz!':'Auftrag geschafft!'}</strong><span>✓ Komfort gerettet · ${frugal?'✓':'○'} Clever gespart · ${efficient?'✓':'○'} ${state.faultMode?'Gezielt & sparsam':'Unter 80 W'}</span></div>`;
+  }
+  function caseBrief(){
+    openModal('🚨 Notruf: Klasse 2B','MISSION',
+      '<div class="af-mission-intro"><span>🚨</span><p>Die Klasse bekommt kaum noch frische Luft.</p><b>Finde den Fehler.</b></div>',
+      [['Einsatz starten',startCase],['Missionen',missionBoard]]);
+  }
+  function startCase(){
+    startMission(2,'challenge');closeView.mix=0;closeView.transition=0;Object.assign(state,{faultMode:true,repaired:false,roomChecked:false,filterSeen:false,falseFixes:0,q:288,sd:true,ec:true,outlets:2,vr:true,vrActive:true,volumeDone:true,demandDone:true,splitDone:true});
+    target=model();display={...target};interacted=true;refresh();updateInspection();
+    announce('Klasse 2B braucht dich. Gehe zum orangefarbenen Messpunkt.');
+  }
+  function atUnit(){return Math.hypot(hero.x-3.91,hero.z+2.85)<1.5;}
+  function runService(kind){
+    if(!state.faultMode||serviceTask)return;
+    if(kind==='measure'&&(!atInspection()||!inspectionVisited)){toast('Zum orangefarbenen Punkt laufen: Boden antippen oder W A S D.');return;}
+    if(kind!=='measure'&&!atUnit()){toast('Gehe zuerst zum Lüftungsgerät.');return;}
+    if(kind==='repair'&&(!state.filterSeen||state.repaired))return;
+    if(kind==='repair'&&spending()+100>budget()){closeModal();toast('CHF 100 für den Service fehlen. Unnötige Bauteile zurückbauen oder Einsatz neu starten.');return;}
+    closeModal();cancelJourney();serviceTask={kind,left:kind==='repair'?1.8:1.2};reaction=2;updateInspection();
+  }
+  function diagnose(){
+    if(!state.faultMode||!state.roomChecked)return;
+    if(state.repaired){toast('Filter gereinigt. Beobachte die Klasse und schliesse den Einsatz ab.');return;}
+    openModal(state.filterSeen?'Der Filter ist zugesetzt':'Wo bleibt die Luft?','AM LÜFTUNGSGERÄT',
+      state.filterSeen?'<p>Staub blockiert den Filter. Der Ventilator dreht, aber zu wenig Luft kommt im Raum an. Reinigen statt die ganze Anlage aufrüsten.</p><p><b>Filterservice: CHF 100.</b> Arbeitskosten werden nicht zurückerstattet.</p>':'<p>Der Ventilator läuft. Im Raum kommt deutlich weniger Luft an als eingestellt. Prüfe das Bauteil, das den Luftweg behindern könnte.</p>',
+      state.filterSeen?[['Filter reinigen · CHF 100',()=>runService('repair')],['Später',closeModal]]:
+      [['Filter prüfen',()=>runService('filter')],['Luftregler prüfen',()=>runService('regulator')],['Luftauslässe prüfen',()=>runService('outlet')],['Zurück',closeModal]]);
+  }
+  function caseAction(){
+    if(!state.faultMode)return;
+    if(!state.roomChecked){runService('measure');return;}
+    if(!state.repaired){approach([3.91,3.1,-2.85],diagnose,'Störung untersuchen');return;}
+    classroomReport();
+  }
+  function tickService(dt){
+    repairBurst=Math.max(0,repairBurst-dt);
+    if(!serviceTask)return;
+    serviceTask.left-=dt;if(serviceTask.left>0)return;
+    const kind=serviceTask.kind;serviceTask=null;
+    if(kind==='measure'){
+      state.roomChecked=true;reward('measurement',100,'Luft gemessen');feedback('Spur entdeckt · Luft fehlt zwischen Gerät und Raum');
+      openModal('Die Luft geht unterwegs verloren','SPUR 1 / 2 · IM RAUM GEMESSEN',
+        `<p>Am Gerät eingestellt: <b>${state.q} m³/h.</b><br>Im Raum kommen im Spiel nur <b>${Math.round(FLOWCRAFT_MODEL.deliveredFlow(state))} m³/h</b> an.</p><p>Der Ventilator läuft. Mehr Drehzahl löst die Ursache nicht. Untersuche jetzt das Gerät.</p>`,
+        [['Zum Gerät',()=>{closeModal();caseAction();}],['Weiter untersuchen',closeModal]]);
+    }else if(kind==='filter'){
+      state.filterSeen=true;reward('cause',150,'Ursache gefunden');feedback('Spur 2 · Filter zugesetzt','fan');diagnose();
+    }else if(kind==='repair'){
+      state.repaired=true;reward('repair',150,'Luftweg repariert');target=model();invalidateApproval();repairBurst=2.5;reaction=2;
+      feedback('Filter frei! Frische Luft erreicht die Klasse. − CHF 100','fan');cue(true);refresh();
+    }else{
+      state.falseFixes++;showBeat('Da fehlt noch eine Spur.','puzzled');cue('warning');feedback('Keine Verbesserung · der Luftweg bleibt gestört','fan');
+      info('Keine Veränderung',kind==='regulator'?'Das war nicht die Ursache. Der Luftregler arbeitet bereits richtig. Prüfe den Filter.':'Das war nicht die Ursache. Die Luftauslässe waren bereits verbunden. Prüfe den Filter.');
+    }
+    updateInspection();
+  }
+  function cue(kind){
+    if(!sound||!audio)return;
+    const notes={measure:[740,880],reward:[660,880,1100],install:[180,360],warning:[230,170],regulator:[440,880],airflow:[180,520],cause:[330,660,880],repair:[440,660,990],complete:[523,659,784,1047]};
+    const seq=notes[kind]||notes[kind===false?'warning':'reward'];
+    try{seq.forEach((hz,i)=>{const t=audio.currentTime+i*.065,o=audio.createOscillator(),g=audio.createGain();o.type=kind==='install'?'triangle':'sine';o.connect(g);g.connect(audio.destination);o.frequency.setValueAtTime(hz,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.035,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.start(t);o.stop(t+.13);});}catch(e){}
+  }
+  let onboarding='choice', tutorialMeasure=0, introLeft=1.4, siteAction=null;
+  let firstImpression=true, firstChoices=[], windowOpen=false, windowPhase=0, firstDelay=0, pendingFirstChoice=null;
+  let firstRun={route:'',actions:0,recoveries:0,score:0,air:0,comfort:0,clever:0};
+  let firstBest=0;
+  try{const saved=Number(localStorage.getItem('flowcraft-first-best-v1'));if(Number.isInteger(saved)&&saved>=0&&saved<=1000)firstBest=saved;}catch(e){}
+  const firstRouteKeys=['window','boost','investigate'],firstRouteNames={window:'Fenster',boost:'mehr Lüftung',investigate:'Untersuchen'};
+  let firstRoutes={};
+  try{const saved=JSON.parse(localStorage.getItem('flowcraft-first-routes-v1')||'{}');for(const key of firstRouteKeys)if(saved[key]===true)firstRoutes[key]=true;}catch(e){}
+  const firstRouteCount=()=>firstRouteKeys.filter(key=>firstRoutes[key]).length;
+  const firstRouteProgress=()=>`${firstRouteCount()} / 3 Wege entdeckt`;
+  function saveFirstRoute(key){if(!firstRouteKeys.includes(key))return;firstRoutes[key]=true;try{localStorage.setItem('flowcraft-first-routes-v1',JSON.stringify(firstRoutes));}catch(e){}}
+  if(firstBest)missionProgress.level1=true;
+  // Presentation rig only: orthographic close framing, not a second movement/world system.
+  const closeView={mix:1,focus:[1.2,1.3,.55],transition:0};
+  const guidance={key:'',idle:0,level:0,distance:Infinity};
+  function hintTarget(){
+    return tutorialTarget()||(state.mission===0&&!inspectionDone||state.faultMode&&!state.roomChecked?[0,.1,1.35]:state.faultMode&&!state.repaired?[3.91,.1,-2.7]:null);
+  }
+  function resetGuidance(){guidance.key='';guidance.idle=0;guidance.level=0;guidance.distance=Infinity;}
+  function tickGuidance(dt){
+    const point=hintTarget(),key=[missionKey(),onboarding,state.vr,state.vrActive,state.volumeDone,state.demandDone,state.roomChecked,state.filterSeen,state.repaired,inspectionDone,atInspection(),panel].join(':');
+    const distance=point?Math.hypot(hero.x-point[0],hero.z-point[2]):Infinity;
+    if(key!==guidance.key){resetGuidance();guidance.key=key;guidance.distance=distance;}
+    // Actual progress toward the task resets the clock; arbitrary taps cannot suppress help.
+    if(distance<guidance.distance-.18){guidance.idle=0;guidance.level=0;guidance.distance=distance;}
+    root.dataset.guidance=String(guidance.level);
+    if(introLeft||tutorialMeasure||siteAction||serviceTask||inspecting||installation||closeView.transition)return;
+    if(!point&&!guided()){guidance.level=0;return;}
+    guidance.idle+=dt;
+    const thresholds=guided()?[4,9,15]:[8,18,28];
+    const level=thresholds.filter(n=>guidance.idle>=n).length;
+    if(level===1&&guidance.level===0&&elapsed>rewardUntil)showBeat(point?'PIKO · Schau dich am markierten Ort um.':'PIKO · Probiere den nächsten Schritt.','curious',0);
+    guidance.level=level;root.dataset.guidance=String(level);
+  }
+  function beginSiteAction(kind,run){hero.path=[];siteAction={kind,left:.65,run};reaction=.85;cue(kind==='vr'?'regulator':kind==='window'?'airflow':'measure');}
+  function tickCloseView(dt){
+    const close=guided()&&opening(),goal=close?1:0;
+    if(closeView.mix!==goal){closeView.mix=reduced?goal:clamp(closeView.mix+(goal?1:-1)*dt/1.4,0,1);fitCamera();}
+    closeView.transition=close?0:closeView.mix;
+    const focus=onboarding==='measure'?[1.2,1.3,.55]:onboarding==='distribute'?[.25,1.3,.3]:[2.1,1.65,-1.05];
+    if(close){const k=reduced?1:1-Math.exp(-dt*3);closeView.focus=closeView.focus.map((v,i)=>lerp(v,focus[i],k));fitCamera();}
+    root.dataset.view=close?'immersive':closeView.transition?'transition':'planning';
+    ui('planning-reveal').hidden=!closeView.transition||panel!=='menu';
+  }
+  let xp=0,shownXP=0,rewardUntil=0,installation=null,meshLift=0,beat=0,beamCue=0,cameraEmphasis=false,beatPoint=[3.91,3.1,-2.85];
+  let bestFlow={};
+  const FLOW_MAX={classroom:1000,office:350,coordination:400,rescue:650};
+  const missionKey=()=>state.faultMode?'rescue':classroom()?'classroom':state.mission===0?'office':'coordination';
+  try{const saved=JSON.parse(localStorage.getItem('flowcraft-flow-v1')||'{}');for(const key of Object.keys(FLOW_MAX))if(Number.isInteger(saved[key])&&saved[key]>=0&&saved[key]<=FLOW_MAX[key])bestFlow[key]=saved[key];}catch(e){}
+  const earned=new Set();
+  const opening=()=>['choice','window-fresh','window','investigate','boost-fresh','boost','clue','balance','check','finish','measure','unit','airflow','distribute'].includes(onboarding);
+  const guided=()=>classroom()&&!state.faultMode&&onboarding!=='done';
+  function finishIntro(){introLeft=0;ui('intro').hidden=true;for(const el of [$('.af-head'),$('.af-meters'),world,$('.af-controls')])el.inert=modalOpen;}
+  function resetFlow(){xp=0;shownXP=0;earned.clear();rewardUntil=0;beat=0;beamCue=0;ui('reward').hidden=true;syncFlow(0);}
+  function showBeat(text,mood='happy',strength=1){
+    rewardUntil=elapsed+2;ui('reward-text').textContent=text;ui('reward').hidden=false;ui('reward').dataset.mood=mood;ui('toast').hidden=true;
+    beat=strength;reaction=Math.max(reaction,strength);if(mood==='happy')repairBurst=Math.max(repairBurst,strength);announce(text);
+  }
+  function syncFlow(dt){
+    shownXP=reduced?xp:lerp(shownXP,xp,1-Math.exp(-dt*9));if(Math.abs(shownXP-xp)<1)shownXP=xp;
+    const key=missionKey(),cap=FLOW_MAX[key];ui('xp').hidden=xp===0;ui('xp-value').textContent=`${Math.round(shownXP)} / ${cap}`;
+    ui('xp').style.setProperty('--flow-progress',(shownXP/cap*100)+'%');ui('xp').setAttribute('aria-label',`FLOW ${xp} von ${cap}. Bestwert ${bestFlow[key]||0}`);
+  }
+  function reward(id,points,text){
+    if(earned.has(id))return;earned.add(id);xp=Math.min(FLOW_MAX[missionKey()],xp+points);
+    bestFlow[missionKey()]=Math.max(bestFlow[missionKey()]||0,xp);try{localStorage.setItem('flowcraft-flow-v1',JSON.stringify(bestFlow));}catch(e){}
+    beatPoint=id==='route'?[0,2.7,-2.12]:['cause','repair','discovery'].includes(id)?[3.91,3.1,-2.85]:[hero.x,1.3,hero.z];showBeat(`+${points} FLOW · ${text}`,'happy',id==='complete'?2:1);if(id==='co2')ui('reward').dataset.mood='worried';cue(id==='complete'?'complete':id==='co2'||id==='measurement'?'measure':id==='cause'?'cause':id==='repair'?'repair':id==='regulator'?'regulator':id==='airflow'?'airflow':'reward');syncFlow(0);
+    const rr=root.getBoundingClientRect(),wr=world.getBoundingClientRect(),to=ui('xp').getBoundingClientRect(),p=proj([hero.x,1.5,hero.z]);
+    ui('flow-flight').style.setProperty('--fx',(wr.left-rr.left+p[0])+'px');ui('flow-flight').style.setProperty('--fy',(wr.top-rr.top+p[1])+'px');ui('flow-flight').style.setProperty('--tx',(to.left-rr.left+to.width/2)+'px');ui('flow-flight').style.setProperty('--ty',(to.top-rr.top+to.height/2)+'px');
+    ui('flow-flight').hidden=reduced;ui('flow-flight').classList.remove('af-flying');void ui('flow-flight').offsetWidth;ui('flow-flight').classList.add('af-flying');
+  }
+  function missionBoard(){
+    const missions=[
+      ['level1','🌬️','Schulzimmer','Rette eine müde Klasse',`Best: ${firstBest} / 1000 · ${firstRouteProgress()}`],
+      ['classroom','🔥','Profi-Challenge','Plane Luft, Ruhe und Energie',`Best FLOW: ${bestFlow.classroom||0} / ${FLOW_MAX.classroom}`],
+      ['rescue','🚨','Notruf 2B','Finde den versteckten Fehler',`Best FLOW: ${bestFlow.rescue||0} / ${FLOW_MAX.rescue}`],
+      ['office','🏢','Büro','Mach das Büro komfortabel',`Best FLOW: ${bestFlow.office||0} / ${FLOW_MAX.office}`],
+      ['coordination','🏗️','Umbau','Komm am Träger vorbei',`Best FLOW: ${bestFlow.coordination||0} / ${FLOW_MAX.coordination}`]
+    ];
+    const done=progressKeys.filter(key=>missionProgress[key]).length;
+    openModal('Deine Einsätze',`${done} / 5 EINSÄTZE GESCHAFFT`,
+      '<p class="af-board-lead">Wähle frei. Wiederholen verbessert deinen Bestwert.</p>',
+      [['Weiterspielen',closeModal]]);
+    const board=document.createElement('div');board.className='af-mission-board';
+    for(const [key,icon,name,desc,best] of missions){
+      const button=document.createElement('button'),symbol=document.createElement('i'),copy=document.createElement('span'),title=document.createElement('b'),description=document.createElement('small'),status=document.createElement('em'),result=document.createElement('strong');
+      button.dataset.missionCard=key;button.setAttribute('data-mission-card',key);button.setAttribute('aria-label',name+' starten');symbol.textContent=icon;title.textContent=name;description.textContent=desc;status.textContent=missionProgress[key]?'✓ GESCHAFFT':'NOCH OFFEN';result.textContent=key==='level1'?best:`${'★'.repeat(medals[key]||0)}${'☆'.repeat(3-(medals[key]||0))} · ${best}`;
+      copy.append(title,description);button.append(symbol,copy,status,result);button.addEventListener('click',()=>missionIntro(key));board.append(button);
+    }
+    ui('modal-content').append(board);
+    ui('modal').dataset.kind='missions';
+  }
+  function missionIntro(key){
+    if(key==='rescue'){caseBrief();return;}
+    const cards={
+      level1:['🌬️ Schulzimmer','Die Klasse wird müde.','Bring frische Luft zurück.',()=>startMission(2,'first')],
+      classroom:['🔥 Profi-Challenge','Jetzt zählt dein ganzer Plan.','Schaffe Komfort, Budget und Energie.',startChallenge],
+      office:['🏢 Büro','Ein Team braucht frische Luft ohne Zug.','Mach das Büro komfortabel.',()=>startMission(0)],
+      coordination:['🏗️ Umbau','Ein Träger blockiert deinen Lüftungskanal.','Finde einen Weg vorbei.',()=>startMission(1)]
+    };
+    const [title,line,goal,start]=cards[key];
+    openModal(title,'MISSION',`<div class="af-mission-intro"><span>${title.split(' ')[0]}</span><p>${line}</p><b>${goal}</b></div>`,[['Mission starten',start],['Missionen',missionBoard]]);
+  }
+  function startChallenge(){firstImpression=false;startMission(2,'challenge');}
+  function skipTutorial(){firstImpression=false;cancelJourney();onboarding='done';tutorialMeasure=0;closeView.mix=0;closeView.transition=0;resetGuidance();closeModal();syncTutorial();refresh();resize();}
+  const firstComfortable=()=>firstImpression&&!windowOpen&&state.outlets>=2&&state.q===240;
+  function firstPop(points,text,mood='happy'){
+    showBeat(`+${points} · ${text}`,mood,1);cue(mood==='draft'?'warning':mood==='curious'?'measure':'reward');
+  }
+  function firstChoice(choice){
+    if(!firstImpression||!guided()||onboarding!=='choice'||destination||siteAction||pendingFirstChoice)return;
+    if(choice==='investigate'){
+      firstRun.route=choice;firstRun.actions++;firstChoices.push(choice);reaction=1.6;windowOpen=false;onboarding='investigate';beginFirstInvestigation();invalidateApproval();syncTutorial();refresh();return;
+    }
+    pendingFirstChoice=choice;
+    const point=choice==='window'?[1.8,2,-2.9]:[3.91,3.1,-2.85];
+    const label=choice==='window'?'Fenster öffnen':choice==='boost'?'Lüftung stärker stellen':'Anlage untersuchen';
+    approach(point,()=>beginSiteAction(choice==='window'?'window':choice==='boost'?'vr':'measure',()=>completeFirstChoice(choice)),label);
+    syncTutorial();refresh();
+  }
+  function completeFirstChoice(choice){
+    if(!firstImpression||onboarding!=='choice'||pendingFirstChoice!==choice)return;
+    pendingFirstChoice=null;firstRun.route=choice;firstRun.actions++;firstChoices.push(choice);reaction=1.6;windowOpen=false;
+    if(choice==='window'){
+      windowOpen=true;onboarding='window-fresh';firstDelay=1.2;firstPop(80,'Frische Luft! 🌬️');cue('airflow');
+    }else if(choice==='boost'){
+      state.q=360;target=model();onboarding='boost-fresh';firstDelay=1.0;firstPop(80,'Mehr frische Luft 🌬️');cue('airflow');
+    }
+    invalidateApproval();syncTutorial();refresh();
+  }
+  function beginFirstInvestigation(){
+    if(!firstImpression||destination||siteAction)return;
+    firstRun.actions++;approach([3.91,3.1,-2.85],()=>beginSiteAction('measure',()=>{if(!firstImpression)return;onboarding='clue';firstPop(100,'Luftstau entdeckt','curious');syncTutorial();refresh();}),'Anlage untersuchen');
+  }
+  function firstAdjust(q,next,label){
+    firstRun.actions++;approach([3.91,3.1,-2.85],()=>beginSiteAction('vr',()=>{if(!firstImpression)return;state.q=q;target=model();onboarding=next;firstPop(90,label,next==='boost'?'draft':'happy');syncTutorial();refresh();}),'Lüftung einstellen');
+  }
+  function firstDistribute(){
+    firstRun.actions++;approach([CLASSROOM.slots[1][0],3.02,CLASSROOM.slots[1][1]],()=>{if(!firstImpression)return;change({outlets:2});onboarding='balance';firstPop(120,'Luft verteilt');syncTutorial();refresh();},'Zweiten Auslass montieren');
+  }
+  function firstCheck(){
+    firstRun.actions++;
+    if(!firstComfortable()){firstRun.recoveries++;showBeat(windowOpen?'Fenster noch offen · es zieht!':state.q>240?'Noch zu laut · Luft zurücknehmen.':'Die Luft trifft noch zu wenige Plätze.','draft',1.2);cue('warning');syncTutorial();return;}
+    approach([0,.1,1.35],()=>beginSiteAction('measure',()=>{if(!firstImpression)return;onboarding='finish';firstPop(140,'Klasse fühlt sich wohl');syncTutorial();refresh();}),'Klasse prüfen');
+  }
+  function calculateFirstResult(){
+    const air=firstComfortable()?300:0,comfort=!windowOpen&&state.outlets>=2&&state.q<=240?300:0;
+    const clever=clamp(300-firstRun.recoveries*30-Math.max(0,firstRun.actions-7)*15,180,300);
+    const curiosity=firstRun.route==='investigate'?100:firstRun.recoveries?80:90;
+    const score=air+comfort+clever+curiosity;
+    return {air,comfort,clever,score};
+  }
+  function finishFirstImpression(){
+    if(!firstComfortable()||onboarding!=='finish'){firstCheck();return;}
+    completed=true;celebrate=1;repairBurst=2.5;firstRun={...firstRun,...calculateFirstResult()};firstBest=Math.max(firstBest,firstRun.score);
+    saveFirstRoute(firstRun.route);
+    saveProgress('level1');
+    try{localStorage.setItem('flowcraft-first-best-v1',String(firstBest));}catch(e){}showBeat('Mission geschafft!','happy',2);cue('complete');
+    const missing=firstRouteKeys.find(key=>!firstRoutes[key]),mastered=firstRouteCount()===3;
+    openModal('🏆 MISSION GESCHAFFT','LEVEL 1 · DEIN ERSTER EINSATZ',
+      `<div class="af-rating"><b>${firstRun.score}</b><small>DEIN RESULTAT · BESTE ${firstBest}</small><strong>${mastered?'Alle Wege entdeckt!':'Du hast die Klasse gerettet.'}</strong><span>LUFT ${firstRun.air} · KOMFORT ${firstRun.comfort} · CLEVER ${firstRun.clever}</span></div><div class="af-route-progress" data-route-progress="${firstRouteCount()}"><b>${firstRouteProgress()}</b><span>${mastered?'Stark – du kennst jede Lösung.':`Nächster Tipp: ${firstRouteNames[missing]}`}</span></div>`,
+      [['🔥 PROFI-CHALLENGE',startChallenge],['🔁 NOCHMALS',()=>startMission(2,'first')],['MISSIONEN',missionBoard]]);
+    announce('Mission geschafft. Du hast die Klasse gerettet.');
+  }
+  function tutorialTarget(){
+    if(guided()&&opening())return onboarding==='measure'?[0,.1,1.35]:onboarding==='unit'?[3.91,.1,-2.7]:null;
+    return classroom()&&!state.faultMode&&state.vr&&!state.vrActive?[.65,.1,-2.9]:null;
+  }
+  function tutorialAction(){
+    if(introLeft>0||tutorialMeasure||siteAction||destination)return;
+    if(firstImpression&&onboarding==='window'){
+      firstRun.actions++;firstRun.recoveries++;windowOpen=false;onboarding='investigate';firstChoices.push('close-window');firstPop(70,'Fenster zu · Ursache suchen','curious');
+    }else if(firstImpression&&onboarding==='investigate')beginFirstInvestigation();
+    else if(firstImpression&&onboarding==='clue')firstAdjust(360,'boost','Anlage läuft stärker');
+    else if(firstImpression&&onboarding==='boost')firstDistribute();
+    else if(firstImpression&&onboarding==='balance')firstAdjust(240,'check','Ruhig und gleichmässig');
+    else if(firstImpression&&onboarding==='check')firstCheck();
+    else if(firstImpression&&onboarding==='finish')finishFirstImpression();
+    else if(onboarding==='measure'){
+      if(!atInspection()){pathTo(0,1.35);announce('Zum leuchtenden Messpunkt.');return;}
+      hero.path=[];tutorialMeasure=1.3;reaction=1.3;showBeat('PIKO · Messgerät bereit.','curious',.4);cue('measure');announce('Sensor aktiv. CO₂ wird gemessen.');
+    }else if(onboarding==='unit'){
+      approach([3.91,3.1,-2.85],()=>beginSiteAction('measure',()=>{if(!guided()||onboarding!=='unit')return;onboarding='airflow';reward('discovery',50,'Luftweg entdeckt');syncTutorial();refresh();resize();}),'Lüftungsgerät');
+    }else if(onboarding==='airflow')setFlow(240);
+    else if(onboarding==='distribute'){
+      change({outlets:Math.max(2,state.outlets+1)});onboarding='plan';reward('distribution',100,'Luft verteilt');syncTutorial();refresh();resize();
+    }
+    else if(onboarding==='plan')openPanel('study');
+    else if(onboarding==='regulate'){if(!state.vr)openPanel('technology');else preciseFlow();}
+    else if(onboarding==='optimise'){onboarding='done';openPanel('technology');showBeat('Testen = ausprobieren. Mission prüfen = abschliessen.','curious');resize();}
+    syncTutorial();
+  }
+  function syncTutorial(){
+    if(guided()&&onboarding==='plan'&&state.demandDone)onboarding='regulate';
+    if(guided()&&onboarding==='regulate'&&state.vrActive&&Math.abs(state.q-288)<=2)onboarding='optimise';
+    const active=guided();root.dataset.firstImpression=String(firstImpression&&active);root.dataset.lesson=active&&!opening()?'planning':'opening';root.dataset.tutorial=active?onboarding:'done';ui('onboarding').hidden=!active||panel!=='menu';ui('opening-line').hidden=!active||!opening();act('missions').hidden=active&&opening()&&!medals.classroom;
+    if(active){
+      const copy={choice:['Die Klasse wird müde. Was tust du?','Tippe direkt im Raum – oder nutze die drei Tasten.',''],
+        'window-fresh':['Das wirkt sofort!','Frische Luft strömt durchs offene Fenster.','Einen Moment …'],window:['Brrr … und draussen ist es laut.','Gute Soforthilfe. Jetzt braucht die Klasse eine dauerhafte Lösung.','Fenster schliessen'],investigate:['Finde die Ursache.','Gehe zur Anlage und prüfe den Luftweg.','Anlage untersuchen'],
+        'boost-fresh':['Mehr frische Luft!','Die Klasse wird wacher. Beobachte den Raum.','Einen Moment …'],boost:['Zu viel an einer Stelle!','Papiere flattern, es zieht und wird laut.','Luft besser verteilen'],clue:['Luftstau entdeckt.','Die Anlage läuft schwach und die Luft trifft nur einen Bereich.','Lüftung stärker stellen'],balance:['Besser verteilt – noch zu stark.','Jetzt die hohe Stufe zurücknehmen, ohne die frische Luft zu verlieren.','Luft ruhiger einstellen'],check:['Sieht gut aus. Spürt es die Klasse auch?','Prüfe den Raum vor Ort.','Klasse prüfen'],finish:['Alle sind wieder wach.','Luft verteilt, Fenster zu, kein Sturm im Zimmer.','Mission abschliessen'],measure:['Finde heraus, was hier nicht stimmt.','Untersuche die Luftqualität am Messpunkt.',atInspection()?'CO₂ messen':'Zum Messpunkt gehen'],unit:['Woher kommt die frische Luft?','Untersuche das Lüftungsgerät.','Zum Lüftungsgerät'],airflow:['Lass frische Luft in die Klasse.','Gemessen: 120 m³/h. Das Gerät fördert zu wenig Luft. Probiere mehr aus.','Mehr Frischluft'],distribute:['Mehr Luft. Aber zu viel an einem Ort!','Ein zweiter Luftauslass verteilt die Luft besser und leiser.','Luftauslass einbauen · CHF 350'],plan:['Wie viel Luft braucht die Klasse?','Wie viel Frischluft braucht dieses Zimmer? Der Raumplan hilft dir.','Raumplan öffnen'],regulate:['Jetzt braucht die Klasse genau die richtige Luftmenge.',!state.vr?'Mit einem Luftregler kannst du die Luftmenge genau einstellen. Fachwort: Volumenstromregler.':!state.vrActive?'Aktiviere den Luftregler vor Ort. Das Ziel: 288 m³/h.':'Der Luftregler ist aktiv. Stelle jetzt 288 m³/h ein.',!state.vr?'Luftregler einbauen':!state.vrActive?'Zum Luftregler gehen':'288 m³/h einstellen'],optimise:['Gute Luft soll auch wenig Strom brauchen.','Jetzt kennst du die vier Ziele. Teste Bauteile und Kosten, bevor du die Mission abschliesst.','Bauteile vergleichen']}[onboarding];
+      ui('tutorial-title').textContent=copy[0];ui('tutorial-hint').textContent=tutorialMeasure?'Sensor misst …':siteAction?'Gerät wird vor Ort untersucht …':guidance.level===3&&tutorialTarget()?(onboarding==='measure'?(atInspection()?'Du bist richtig. Tippe auf CO₂ messen.':'Tippe auf den Messpunkt oder auf «Zum Messpunkt gehen».'):onboarding==='unit'?'Tippe auf «Zum Lüftungsgerät». Du gehst automatisch hin.':'Tippe auf «Zum Luftregler gehen». Erst vor Ort wird er aktiv.'):copy[1];act('tutorial-action').textContent=siteAction?'Vor Ort untersuchen …':tutorialMeasure?`Messen · ${Math.round((1-tutorialMeasure/1.3)*100)} %`:copy[2];act('tutorial-action').disabled=!!tutorialMeasure||!!siteAction||!!destination;
+      ui('quick-choices').hidden=onboarding!=='choice';$$('.af-quick-choices button').forEach(button=>{const done=!!firstRoutes[button.dataset.choice];button.disabled=!!destination||!!siteAction||!!pendingFirstChoice;button.dataset.discovered=String(done);button.setAttribute('aria-label',`${firstRouteNames[button.dataset.choice]}${done?' – Weg entdeckt':''}`);});act('tutorial-action').hidden=onboarding==='choice';ui('tutorial-kicker').textContent=firstImpression?`LEVEL 1 · AKTION ${Math.min(7,firstRun.actions+1)}`:'CHALLENGE · GENAU PLANEN';
+      ui('opening-line').textContent=onboarding==='choice'?'Lehrerin: «Die Klasse wird müde. Tu etwas!»':onboarding==='window-fresh'?'«Ahh, frische Luft!»':onboarding==='window'?'«Brrr … und der Strassenlärm stört.»':onboarding==='boost-fresh'?'«Endlich frische Luft!»':onboarding==='boost'?'«Meine Blätter fliegen weg!»':onboarding==='finish'?'Lehrerin: «Stark gelöst!»':onboarding==='measure'?'Lehrerin: «Hier stimmt etwas nicht. Alle werden müde.»':onboarding==='unit'?'CO₂ entdeckt · Ziel: höchstens 1’000 ppm.':onboarding==='distribute'?'«Bessere Luft! Aber jetzt zieht es …»':'«Das Gerät läuft. Trotzdem ist es stickig.»';
+    }
+    const mark=tutorialTarget();act('guide-target').hidden=!mark||introLeft>0||!!destination||guidance.level<2||!!siteAction;
+    if(mark){const arrow=guidance.level===3?'↓ ':'';act('guide-target').textContent=arrow+(guided()&&opening()?(onboarding==='measure'?'MESSPUNKT':'LÜFTUNG'):'LUFTREGLER AKTIVIEREN');}
+    ui('air-reading').hidden=!active||!['airflow','distribute'].includes(onboarding);ui('air-reading').textContent='VOR ORT · '+state.q+' m³/h';
+    const visibleMeters=active?firstImpression?[]:onboarding==='measure'?[]:['distribute','plan','regulate'].includes(onboarding)?['co2','noise','draft']:onboarding==='optimise'?Object.keys(LIMITS):['co2']:Object.keys(LIMITS);
+    $$('.af-meter').forEach(b=>b.hidden=!visibleMeters.includes(b.dataset.metric));
+    if(active){ui('class-tools').hidden=true;if(opening()){ui('technology').hidden=true;ui('outlets').hidden=true;ui('study').hidden=true;}}
+  }
+  function tickTutorial(dt){
+    if(introLeft>0){introLeft=Math.max(0,introLeft-dt);if(!introLeft)finishIntro();}
+    if(tutorialMeasure){tutorialMeasure=Math.max(0,tutorialMeasure-dt);if(!tutorialMeasure){onboarding='unit';reward('co2',100,'Luftproblem entdeckt');syncTutorial();refresh();resize();}}
+    if(siteAction){siteAction.left=Math.max(0,siteAction.left-dt);if(!siteAction.left){const task=siteAction;siteAction=null;task.run();}}
+    if(firstDelay){firstDelay=Math.max(0,firstDelay-dt);if(!firstDelay&&firstImpression){if(onboarding==='window-fresh'){onboarding='window';firstRun.recoveries++;showBeat('Aber jetzt wird es kalt und laut.','draft',1.2);cue('warning');}else if(onboarding==='boost-fresh'){onboarding='boost';showBeat('Aber jetzt zieht es – und die Papiere fliegen.','draft',1.2);cue('warning');}syncTutorial();refresh();}}
+    tickGuidance(dt);tickCloseView(dt);
+    if(installation){installation.left=Math.max(0,installation.left-dt);if(!installation.left){const kind=installation.kind;installation=null;if(kind==='route'&&connected())reward('route',150,'Weg frei!');}}
+    beamCue=Math.max(0,beamCue-dt);beat=Math.max(0,beat-dt*1.8);syncFlow(dt);if(installation||beat||beamCue||cameraEmphasis){cameraEmphasis=!!(installation||beat||beamCue);fitCamera();}
+    if(elapsed>rewardUntil)ui('reward').hidden=true;
+    syncTutorial();
+  }
+  function growingPath(path){
+    if(!installation||installation.kind!=='route'||reduced)return path;
+    let left=(1-installation.left/installation.duration)*path.slice(1).reduce((n,v,i)=>n+Math.hypot(...v.map((a,k)=>a-path[i][k])),0),result=[path[0]];
+    for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],length=Math.hypot(...b.map((v,k)=>v-a[k]));if(left>=length){result.push(b);left-=length;}else{if(left>0)result.push(a.map((v,k)=>lerp(v,b[k],left/length)));break;}}
+    return result;
+  }
+  const workers=[[-2.2,-.35,'#ed8867',Math.PI],[2.2,-.35,'#528bea',Math.PI],[-2.2,.75,'#50b992',0],[2.2,.75,'#a37cde',0]];
+  const obstacles=[...[-2.2,2.2].flatMap(x=>[[-1.25,x,1.1,.64],[1.7,x,1.1,.64]].map(([z,x,hw,hd])=>({x,z,hw,hd}))),...workers.map(([x,z])=>({x,z,hw:.43,hd:.4})),{x:-4.15,z:2.8,hw:.52,hd:.52},{x:4.2,z:-1.5,hw:.43,hd:.43},{x:-4.1,z:-2.6,hw:.7,hd:.38}];
+  const spending = () => FLOWCRAFT_MODEL.spending(state);
+  const model = (s=state) => FLOWCRAFT_MODEL.model(s);
+  const connected = () => FLOWCRAFT_MODEL.connected(state);
+  const budget = () => FLOWCRAFT_MODEL.budget(state);
+  target=model(); display={...target};
+  function quality(k,v) { return v<=LIMITS[k]+1e-7?'good':v<=LIMITS[k]*({co2:1.2,noise:1.1,draft:1.22,power:1.2}[k])?'warn':'bad'; }
+  const allGood = FLOWCRAFT_MODEL.allGood;
+  function announce(text) { ui('live').textContent=text; }
+  function toast(text) { ui('toast').textContent=text; ui('toast').hidden=false; toastUntil=elapsed+3.2; announce(text); }
+  function info(title,text) {
+    ui('selection').hidden=true;
+    openModal(title,'FLOWCRAFT · KURZ ERKLÄRT',`<p>${text}</p>`,[['Weiterspielen',closeModal]]);
+  }
+  function invalidateApproval() { completed=false; stable=0; interacted=true;celebrate=0; }
+  function feedback(text,kind='site') {
+    reaction=.65;
+    pulseKind=kind;
+    pulsePoint=kind==='regulator'?[.65,-2.9]:kind==='fan'?[3.91,-2.99]:kind==='silencer'?[2.72,-2.9]:[...SITES[state.site]];
+    pulse=1;
+    ui('effect').textContent=text;feedbackUntil=elapsed+3.5;
+    announce(text);
+  }
+  function setFlow(v) {
+    const next=classroom()?(state.vrActive?clamp(Math.round(v),80,480):CLASSROOM.presets.reduce((best,q)=>Math.abs(q-v)<Math.abs(best-v)?q:best,120)):clamp(Math.round(v/5)*5,50,190); if(!Number.isFinite(v))return; if(!Number.isFinite(next)||next===state.q)return;
+    const previous=state.q;state.q=next;if(guided()&&onboarding==='airflow'){onboarding='distribute';reward('airflow',100,'Frischluft gestartet');}target=model();invalidateApproval();
+    if(next>previous&&target.draft>LIMITS.draft&&!guided()){showBeat('Oha! Weniger Luft je Auslass hilft.','draft',.6);cue('warning');}
+    feedback(!connected()?`${next} m³/h vorgemerkt · erst den Kanalweg freimachen.`:next>previous?'Mehr frische Luft 🌬️ · aber auch mehr Lärm und Stromverbrauch':'Weniger Luft · leiser und sparsamer, CO₂ steigt');
+    refresh();
+  }
+  function change(patch,message) {
+    history.push({...state}); if(history.length>24)history.shift();
+    const before=target;
+    const installKey=['vr','sd','ec','outlets','route'].find(k=>k in patch&&(k==='outlets'?patch[k]>state[k]:patch[k]&&patch[k]!==state[k]));
+    if(installKey){const duration={vr:.85,outlets:.7,sd:.8,ec:.9,route:1.35}[installKey];installation={kind:installKey,left:duration,duration};beatPoint=installKey==='vr'?[.65,3.2,-2.9]:installKey==='outlets'?[...CLASSROOM.slots[Math.min(state.outlets,3)]].map((v,i)=>v):installKey==='sd'?[2.72,3.1,-2.9]:installKey==='route'?[0,2.7,-2.12]:[3.91,3.1,-2.85];if(beatPoint.length===2)beatPoint=[beatPoint[0],2.8,beatPoint[1]];reaction=.8;repairBurst=1;cue('install');if(installKey==='route')beamCue=2.3;}
+    Object.assign(state,patch);
+    if(classroom()&&'outlets' in patch){state.splitDone=false;studyError=-1;}
+    if(classroom()&&'vr' in patch&&!state.vr){if(siteAction?.kind==='vr')siteAction=null;state.vrActive=false;state.q=CLASSROOM.presets.reduce((best,q)=>Math.abs(q-state.q)<Math.abs(best-state.q)?q:best,120);}
+    target=model();invalidateApproval();placing=false;if(guided()&&!opening())panel='menu';if(spending()>budget()){showBeat('Budget knapp. Ausbauen hilft.','worried');cue('warning');}
+    ui('selection').hidden=true;
+    const delta=(key,unit)=>`${target[key]<before[key]?'−':'+'}${Math.abs(target[key]-before[key]).toFixed(key==='noise'?1:0)} ${unit}`;
+    if('vrActive' in patch){reward('regulator',100,'Luftregler aktiviert');}if('vrActive' in patch)feedback('Luftregler aktiv · jetzt kannst du die Luftmenge auf 1 m³/h genau einstellen.','regulator');
+    else if('vr' in patch)feedback(state.vr?'Luftregler eingebaut · aktiviere ihn jetzt vor Ort.':'Luftregler ausgebaut · wieder nur grobe Ventilatorstufen.','regulator');
+    else if('outlets' in patch){feedback(`${state.outlets} Auslässe · ${Math.round(state.q/state.outlets)} m³/h je · Verteilung neu berechnen.`);pulsePoint=[...outletSites().at(-1)];}
+    else if('sd' in patch)feedback(`${state.sd?'Schalldämpfer eingebaut':'Schalldämpfer ausgebaut'} · ${delta('noise','dB')} am Luftauslass`,'silencer');
+    else if('ec' in patch)feedback(`${state.ec?'EC eingebaut':'Alter Ventilator'} · ${delta('power','W')} bei gleicher Luftmenge`,'fan');
+    else if('route' in patch)feedback(state.route===0?'Kollision! Der Kanal trifft den Träger. Anlage bleibt aus.':state.route===1?'Weg frei! Längerer Kanal · mehr Strom nötig.':'Weg frei! Runter, unter dem Träger durch, wieder hoch.');
+    else feedback(`Luftauslass ${'ABC'[state.site]} · ${FLOWCRAFT_MODEL.branchLength(state).toFixed(2)} m Abzweig · ${delta('power','W')}`);
+    refresh();
+  }
+  function reset() { state.faultMode?startCase():startMission(state.mission,classroom()&&!firstImpression?'challenge':'first'); }
+  function startMission(mission,mode='first') {
+    resetFlow();resetGuidance();siteAction=null;closeView.mix=mission===2?1:0;closeView.focus=[1.2,1.3,.55];closeView.transition=0;
+    firstImpression=mission===2&&mode!=='challenge';firstChoices=[];windowOpen=false;windowPhase=0;firstDelay=0;pendingFirstChoice=null;firstRun={route:'',actions:0,recoveries:0,score:0,air:0,comfort:0,clever:0};
+    serviceTask=null;repairBurst=0;lastRating=null;installation=null;onboarding=mission===2?(firstImpression?'choice':'measure'):'done';tutorialMeasure=0;state=defaults(mission);panel='menu';studyStage=0;studyError=-1;lastTrial=null; target=model();display={...target};plan=false;placing=false;history=[];completed=false;stable=0;
+    angle=.57;zoom=1;visualSite=[...SITES[state.site]];sdLift=0;pulse=0;rotorQ=state.q;flowPhase=0;fanPhase=0;
+    interacted=false;approvedBefore=false;feedbackUntil=0;celebrate=0;previousQualities={};
+    pointers.clear();gesture=null;
+    hero={x:3.9,z:2.7,a:.3,path:[],step:0};destination=null;inspectionDone=false;inspectionVisited=false;inspecting=0;reaction=0;inspectionReading=null;updateInspection();resetCount++;ui('selection').hidden=true;
+    closeModal();ui('toast').hidden=true;buildStatic();refresh();fitCamera();paintScene(elapsed);announce(classroom()?(firstImpression?'Die Klasse wird müde. Was würdest du tun?':'Challenge gestartet: Plane die Luft für acht Lernende.'):'Neuer Büroauftrag gestartet.');
+  }
+  function nextMission() {
+    if(state.mission!==0||!completed)return;
+    closeModal();
+    resetFlow();state={...state,mission:1,site:1,route:0};target=model();display={...target};
+    completed=false;approvedBefore=false;stable=0;placing=false;history=[];feedbackUntil=0;celebrate=0;lastTrial=null;
+    destination=null;inspecting=0;updateInspection();previousQualities={};visualSite=[...SITES[1]];hero.path=[];rotorQ=0;pulse=0;angle=.57;zoom=1;plan=false;
+    pointers.clear();gesture=null;refresh();fitCamera();paintScene(elapsed);
+    openModal('🏗️ Umbau','MISSION',
+      '<div class="af-mission-intro"><span>🏗️</span><p>Ein Träger blockiert deinen Lüftungskanal.</p><b>Finde einen Weg vorbei.</b></div>',
+      [['Kanalweg planen',()=>{closeModal();act('place').click();}]]);
+    announce('Mission 3 freigeschaltet. Finde einen kollisionsfreien Kanalweg.');
+  }
+  const DETAILS={
+    co2:['Frische Luft fürs Team','Vier Personen geben CO₂ ab. Mehr Aussenluft senkt den Messwert nach und nach. Dein Spielziel: höchstens 1\'000 ppm. Die Farben sind eine Diagnosehilfe – CO₂ ist unsichtbar.'],
+    noise:['Leise, aber nicht luftlos','Spielziel: höchstens 40 dB(A). Der Schalldämpfer reduziert den übertragenen Ventilatorschall. Bei sehr hoher Luftmenge bleibt zusätzliches Strömungsgeräusch.'],
+    draft:['Kein Wind im Nacken','Ein Luftauslass direkt über dem Tisch kann stören. Teste Mittelgang und Fensterstreifen: Einbauort und Luftmenge verändern den Komfort. Spielziel: höchstens 0.22 m/s.'],
+    power:['Wie viel Strom braucht die Lüftung?','Längere Kanäle und ein Schalldämpfer bieten der Luft mehr Widerstand. Ein kürzerer Weg oder ein sparsamerer EC-Ventilator kann Strom sparen. Spielziel: höchstens 85 W.']
+  };
+  function studyTask() {
+    const each=CLASSROOM.demand/state.outlets;
+    return [
+      {title:'8 m × 6 m × 3 m = ?',hint:'Raumvolumen: Wie viel Luft passt hinein?',unit:'m³',answers:[96,144,288],correct:144,key:'volumeDone',tip:'8 × 6 = 48 m² Boden. Jetzt noch × 3 m Höhe.'},
+      {title:'144 m³ × 2 pro Stunde = ?',hint:'Auftrag: die Raumluft 2-mal pro Stunde austauschen.',unit:'m³/h',answers:[288,576,144],correct:288,key:'demandDone',tip:'Ein Austausch: 144 m³. Zwei Austausche: 144 + 144.'},
+      {title:`288 m³/h ÷ ${state.outlets} Luftauslässe = ?`,hint:'Gleich verteilen: Wie viel erhält jeder Luftauslass?',unit:'m³/h je',answers:[each*2,each/2,each],correct:each,key:'splitDone',tip:`Teile die gesamte Luftmenge 288 durch ${state.outlets}. Die Summe bleibt 288.`}
+    ][studyStage];
+  }
+  function openPanel(name) {
+    panel=name;placing=false;feedbackUntil=0;studyError=-1;
+    if(name==='study')studyStage=!state.volumeDone?0:!state.demandDone?1:2;
+    refresh();
+  }
+  function answerStudy(index) {
+    if(!classroom()||panel!=='study')return;
+    const task=studyTask();if(task.answers[index]!==task.correct){showBeat('Fast! Schau nochmals hin.','puzzled');cue('warning');studyError=index;feedback(task.tip,'measure');refresh();return;}
+    state[task.key]=true;reward(task.key,100,'Gut geplant');studyError=-1;invalidateApproval();feedback(`${task.correct} ${task.unit} · richtig geplant!`,'measure');
+    if(studyStage===0)studyStage=1;else panel='menu';
+    refresh();
+  }
+  function costMarkup(){
+    const items=[['Schalldämpfer',state.sd?COSTS.silencer:0],['EC-Ventilator',state.ec?COSTS.fan:0]];
+    if(state.faultMode&&state.repaired)items.push(['Filterservice (Arbeit)',100]);
+    if(classroom())items.unshift(['Volumenstromregler',state.vr?COSTS.regulator:0],[`${state.outlets-1} ${state.outlets===2?'zusätzlicher Auslass':'zusätzliche Auslässe'}`,(state.outlets-1)*COSTS.outlet]);
+    if(state.mission===1)items.push(['Kanalweg: '+ROUTES[state.route].name,ROUTES[state.route].cost]);
+    return '<div class="af-cost-list">'+items.map(([name,cost])=>`<span>${name}</span><b>CHF ${num(cost)}</b>`).join('')+`<span>Gesamt / Budget</span><b>${num(spending())} / ${num(budget())}</b></div>`;
+  }
+  function budgetReport(){openModal('Dein Bauteilbudget','FLOWCRAFT · KOSTEN IM GRIFF',costMarkup()+
+    `<p class="${spending()>budget()?'af-budget-bad':'af-plan-stamp'}">${spending()>budget()?`CHF ${num(spending()-budget())} über Budget. Baue unnötige Bauteile aus, bevor du die Mission prüfst.`:`CHF ${num(budget()-spending())} bleiben übrig.`}</p>`+
+    '<p>Die Grundanlage mit einem Luftauslass ist bereits vorhanden. Wenn du ein Bauteil ausbaust, bekommst du im Spiel den ganzen Preis zurück. Zusätzliche Luftauslässe verteilen die Luft besser, brauchen aber Platz und Geld.</p>',[['Weiterplanen',closeModal]]);}
+  function preciseFlow(){
+    if(!classroom()||siteAction)return;
+    if(!state.vr){openPanel('technology');act('regulator').classList.add('af-nudge');feedback('Baue zuerst den Luftregler ein. Fachwort: Volumenstromregler.','regulator');return;}
+    if(!state.vrActive){approach([.65,3.43,-2.9],()=>{if(state.vr&&!state.vrActive)beginSiteAction('vr',()=>{if(state.vr&&!state.vrActive)change({vrActive:true});});},'Luftregler · vor Ort aktivieren');return;}
+    openModal('Luftmenge genau einstellen','FACHWORT · VOLUMENSTROMREGLER',
+      `<p>Mit diesem Luftregler bestimmst du genau, wie viel Luft in den Raum kommt. Dein Ziel: <b>288 m³/h</b>. ${state.outlets===1?'Ein Luftauslass erhält die ganze Luftmenge.':`${state.outlets} Luftauslässe teilen sich diese Luftmenge.`}</p>`,
+      [['Einstellung übernehmen',()=>{const value=Number(field.value);if(field.value.trim()===''||!Number.isFinite(value)||value<80||value>480||!Number.isInteger(value)){error.textContent='Bitte eine ganze Zahl von 80 bis 480 eingeben.';field.focus();field.select?.();return;}closeModal();setFlow(value);} ],['Abbrechen',closeModal]]);
+    const label=document.createElement('label');label.className='af-number-label';label.setAttribute('for','fc07-number');label.textContent='Luftmenge in m³/h';
+    const field=document.createElement('input');field.type='number';field.id='fc07-number';field.setAttribute('id','fc07-number');field.setAttribute('aria-label','Genaue Luftmenge');field.setAttribute('inputmode','numeric');field.min='80';field.max='480';field.step='1';field.value=String(state.q);field.className='af-number';
+    const error=document.createElement('span');error.className='af-input-error';error.setAttribute('role','status');
+    ui('modal-content').append(label,field,error);field.focus();field.select?.();
+    field.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ui('modal-actions').querySelector('button').click();}});
+  }
+  // A free forecast, not commissioning: compare one design change at a time.
+  // Only per-mission, in-memory results are kept; no save data or tracking.
+  function trialReport(){
+    const values=model(), clear=connected(), over=spending()>budget();
+    const count=clear?Object.keys(LIMITS).filter(k=>quality(k,values[k])==='good').length:0;
+    const facts=[
+      ['co2','Frische Luft','ppm',num(values.co2),'Mehr Aussenluft senkt CO₂.'],
+      ['noise','Ruhe','dB(A)',values.noise.toFixed(1),'Mehr Luftauslässe oder ein Schalldämpfer können helfen.'],
+      ['draft','Komfort','m/s',values.draft.toFixed(3),classroom()?'Weniger Luft je Auslass bedeutet weniger Zugluft.':'Ein anderer Einbauort kann Zugluft vermeiden.'],
+      ['power','Strom','W',num(values.power),'Weniger Luft, kürzere Wege oder ein sparsamer EC-Ventilator können Strom sparen.']
+    ];
+    let next='Weiter ausprobieren', why='Verändere eine Sache. Vergleiche dann den nächsten Testlauf.', action=()=>{};
+    if(state.faultMode&&!state.repaired){next=state.roomChecked?'Störung untersuchen':'Im Raum messen';why='Der Ventilator läuft, aber die Luft kommt nicht an. Finde zuerst die Ursache.';action=caseAction;}
+    else if(!clear){next='Kanalweg reparieren';why='Der Kanal trifft den Träger. Ohne freien Weg gibt es keinen Luftstrom.';action=()=>act('place').click();}
+    else if(over){next='Kosten ansehen';why=`CHF ${num(spending()-budget())} über Budget. Baue unnötige Teile zurück; du erhältst den vollen Spielpreis zurück.`;action=budgetReport;}
+    else if(classroom()&&state.q===120){next='Luftmenge ausprobieren';why='Noch zu wenig frische Luft. Tippe einmal auf + und beobachte die Klasse.';action=()=>act('more').focus();}
+    else if(classroom()&&state.outlets<2&&(values.noise>40||values.draft>.22)){next='Luft verteilen';why='Ein Auslass bekommt die ganze Luft. Baue einen zweiten und vergleiche Lärm und Zugluft.';action=()=>openPanel('outlets');}
+    else if(classroom()&&(!state.volumeDone||!state.demandDone)){next='Raum vermessen';why='Jetzt kennst du die Wirkung. Im Raumplan findest du heraus, wie viel Luft die Klasse braucht.';action=()=>openPanel('study');}
+    else if(classroom()&&!state.vr){next='Luftregler ansehen';why='Mit einem Luftregler kannst du die berechnete Luftmenge genau einstellen. Fachwort: Volumenstromregler.';action=()=>openPanel('technology');}
+    else if(classroom()&&Math.abs(state.q-CLASSROOM.demand)>2){next='Luftmenge einstellen';why='Dein Plan braucht 288 m³/h. Tippe auf die Luftmenge und regle genau ein.';action=preciseFlow;}
+    else if(classroom()&&!state.splitDone){next='Verteilung planen';why='Teile den Luftbedarf durch die Zahl deiner Auslässe. Die Gesamtmenge bleibt gleich.';action=()=>openPanel('study');}
+    else if(values.co2>1000){next='Luftmenge ausprobieren';why='Zu wenig Aussenluft: Erhöhe die Luftmenge etwas und vergleiche erneut.';action=()=>flow.focus();}
+    else if(values.noise>40){next=classroom()?'Bauteile vergleichen':'Leiser machen';why='Die Luft ist noch zu laut. Ein Schalldämpfer macht sie leiser, erhöht aber auch den Strombedarf.';action=()=>classroom()?openPanel('technology'):act('silencer').focus();}
+    else if(values.draft>.22){next=classroom()?'Auslässe ansehen':'Einbauort ändern';why='Es zieht am Arbeitsplatz. Verteile die Luft besser, statt einfach immer mehr zu fördern.';action=()=>classroom()?openPanel('outlets'):act('place').click();}
+    else if(values.power>85){next=classroom()?'Technik vergleichen':'Ventilator ansehen';why='Die Lüftung braucht zu viel Strom. Vergleiche einen sparsameren Ventilator und kürzere Luftwege.';action=()=>classroom()?openPanel('technology'):act('fan').focus();}
+    else {next='Mission abschliessen';why='Dein Test sieht gut aus. Warte kurz, bis die Messwerte stabil sind, und prüfe dann deine Mission.';action=()=>{placing=false;panel='menu';refresh();act('check').focus();};}
+    const comparison=lastTrial&&clear&&lastTrial.clear?
+      `<p class="af-trial-compare">Seit dem letzten Test: <b>${Math.abs(values.power-lastTrial.values.power)<.0001?'Stromverbrauch unverändert':`${Math.abs((values.power-lastTrial.values.power)/lastTrial.values.power*100).toFixed(0)}% ${values.power>lastTrial.values.power?'mehr':'weniger'} Stromverbrauch`}</b> · Bauteilkosten ${spending()-lastTrial.spent>=0?'+':'−'} CHF ${num(Math.abs(spending()-lastTrial.spent))}.</p>`:'';
+    const cards=facts.map(([key,label,unit,value,explanation])=>{
+      const good=clear&&quality(key,values[key])==='good';
+      return `<div class="af-trial-card" data-pass="${good}"><span>${good?'✓':'!'} ${label}</span><b>${clear?value:'—'} <small>${unit}</small></b><p>${!clear?'Anlage blockiert.':good?'Im Zielbereich.':explanation}</p></div>`;
+    }).join('');
+    openModal(count===4&&!over?'Dein Aufbau hat Potenzial!':count>=2?'Das wirkt schon!':'Finde den Engpass',
+      'DEIN TESTERGEBNIS',
+      `<div class="af-trial-score"><b>${count}<small> / 4</small></b><span>technische Ziele<br>${clear?'Vorschau mit stabilen Messwerten':'Kein freier Luftweg'}</span></div>`+
+      `<div class="af-trial-grid">${cards}</div>`+comparison+
+      `<div class="af-next-try"><b>Dein nächster Versuch</b><p>${why}</p></div>`+
+      '<p class="af-note">Teste deinen Aufbau so oft du willst. Für den Abschluss müssen Messwerte, Plan und Budget stimmen.</p>',
+      [[next,()=>{closeModal();action();}],['Zurück zum Aufbau',closeModal]]);
+    ui('modal').dataset.kind='trial';
+    lastTrial={values:{...values},spent:spending(),clear};
+  }
+  function classroomReport(){
+    if(state.faultMode&&(!state.roomChecked||!state.filterSeen||!state.repaired)){toast('Der Auftrag ist noch offen: im Raum messen, Ursache finden und reparieren.');return;}
+    const issues=[];
+    if(!state.volumeDone||!state.demandDone||!state.splitDone)issues.push('Raumplan: Volumen, Luftbedarf und Verteilung fertig berechnen.');
+    if(!state.vr)issues.push('Baue einen Luftregler ein, damit du die Luftmenge genau einstellen kannst (Fachwort: Volumenstromregler).');
+    else if(!state.vrActive)issues.push('Aktiviere den eingebauten Luftregler vor Ort.');
+    if(Math.abs(state.q-CLASSROOM.demand)>2)issues.push(`Luftmenge ${state.q} → 288 m³/h einstellen (Spiel-Toleranz ±2).`);
+    if(spending()>budget())issues.push(`CHF ${num(spending()-budget())} über Budget: unnötige Bauteile ausbauen.`);
+    if(target.noise>LIMITS.noise)issues.push(state.outlets<2?'Die Luft verteilt sich auf zu wenige Luftauslässe. Baue einen zweiten ein.':!state.sd?'Die Anlage ist zu laut. Teste «Leiser machen» (Schalldämpfer).':'Die Luftauslässe sind zu laut. Prüfe die Luftmenge.');
+    if(target.co2>LIMITS.co2)issues.push('Zu wenig frische Luft für acht Lernende. Prüfe den Luftbedarf.');
+    if(target.draft>LIMITS.draft)issues.push('Zu viel Luft an einem Ort. Verteile sie auf mehrere Auslässe.');
+    if(target.power>LIMITS.power)issues.push('Zu viel Stromverbrauch. Teste den sparsameren EC-Ventilator.');
+    if(!issues.length&&stable<ASSUMPTIONS.stabilitySeconds)issues.push('Die Messwerte laufen noch ein. Schliessen und kurz weiter messen.');
+    if(issues.length){openModal('Dein Plan-Check','SCHULZIMMER · WEITERPROBIEREN',
+      '<p>Du kannst alles hier korrigieren. Dein Aufbau bleibt erhalten.</p><ul>'+issues.map(t=>`<li>${t}</li>`).join('')+'</ul>',[['Weiterplanen',closeModal]]);return;}
+    if(state.faultMode){
+      completed=true;approvedBefore=true;celebrate=1;repairBurst=2.5;
+      openModal('Du hast Klasse 2B gerettet!','EINSATZ ABGESCHLOSSEN',ratingMarkup('rescue')+
+        '<p>Der Ventilator war nicht kaputt. Du hast den blockierten Filter gefunden und den Luftweg wieder freigemacht. Die Klasse kann sich wieder konzentrieren.</p>'+
+        `<div class="af-report"><div>Komfort<b>4 / 4 Ziele</b></div><div>Strom<b>${num(target.power)} W</b></div><div>Restbudget<b>CHF ${num(budget()-spending())}</b></div><div>Umwege<b>${state.falseFixes}</b></div></div>`+
+        '<p>Optional: drei Sterne ohne unnötigen Eingriff, mit höchstens CHF 3’150 Gesamtkosten und höchstens 80 W. Bestwerte bleiben auf diesem Gerät.</p>',
+        [['Nächste Mission: Büro',()=>missionIntro('office')],['Nochmals',startCase],['Missionen',missionBoard],['Klasse ansehen',closeModal]]);return;
+    }
+    completed=true;approvedBefore=true;celebrate=1;feedback('Mission geschafft · gut gerechnet und gut gebaut!');
+    openModal('Die Klasse kann aufatmen!','KAPITEL 1 / 3 · MISSION GESCHAFFT',
+      ratingMarkup('classroom')+`<div class="af-badges"><span>✓ Raum-Profi</span><span>◆ ${!state.sd&&state.outlets===3?'Budget-Profi':'Clever gebaut'}</span></div>`+
+      `<p class="af-plan-stamp">8 × 6 × 3 = 144 m³<br>144 × 2 = 288 m³/h<br>288 ÷ ${state.outlets} = ${288/state.outlets} m³/h je Auslass</p>`+
+      `<div class="af-report"><div>Luftqualität<b>${num(display.co2)} ppm</b></div><div>Akustik<b>${display.noise.toFixed(1)} dB(A)</b></div><div>Komfort<b>${display.draft.toFixed(3)} m/s</b></div><div>Ventilator<b>${num(display.power)} W</b></div></div>`+
+      costMarkup()+`<p><b>CHF ${num(budget()-spending())} übrig.</b> ${state.outlets===2?'Zwei Luftauslässe und ein Schalldämpfer schaffen Ruhe mit wenigen Einbauorten.':!state.sd?'Mehr Luftauslässe senken das Strömungsgeräusch. So schaffst du das Lärmziel sogar ohne Schalldämpfer.':'Deine Luftauslässe verteilen die Luft.'}</p>`+
+      '<p>Als Gebäudetechnikplaner/in EFZ verbindest du räumliches Denken, Rechnen und Bauteilwahl. Als Nächstes: einen Einbauort im Büro optimieren.</p>'+
+      '<p class="af-note">Der Büroauftrag beginnt mit einer eigenen Grundanlage und CHF 2’500. Dort ist die Regelung bereits vorhanden.</p>',
+      [['Weiter: Büro',()=>startMission(0)],['Nochmals',startChallenge],['Missionen',missionBoard],['Weiter optimieren',closeModal]]);
+    announce('Mission geschafft. Rechenplan, Komfort und Budget stimmen.');
+  }
+  function refresh() {
+    flow.value=state.q;flow.style.setProperty('--fill',((state.q-50)/140*100)+'%');ui('flow').textContent=state.q+' m³/h';
+    ui('budget').textContent='CHF '+num(budget()-spending());act('budget').dataset.over=String(spending()>budget());
+    const cls=classroom();
+    ui('slider-wrap').hidden=cls;act('precise').hidden=!cls;flow.disabled=cls&&!state.vrActive;
+    act('less').setAttribute('aria-label',cls?(state.vrActive?'Luftmenge um 1 reduzieren':'Eine Ventilatorstufe reduzieren'):'Luftmenge um 5 reduzieren');
+    act('more').setAttribute('aria-label',cls?(state.vrActive?'Luftmenge um 1 erhöhen':'Eine Ventilatorstufe erhöhen'):'Luftmenge um 5 erhöhen');
+    act('precise').dataset.locked=String(!state.vrActive);ui('precise-value').textContent=state.q+' m³/h';ui('precise-mode').textContent=!state.vr?'Luftregler einbauen':!state.vrActive?'Luftregler aktivieren':'Genau einstellen · Zahl antippen';
+    act('less').disabled=cls&&state.q<=(state.vrActive?80:120);act('more').disabled=cls&&state.q>=(state.vrActive?480:360);
+    ui('class-tools').hidden=!cls||panel!=='menu';ui('technology').hidden=!cls||panel!=='technology';ui('outlets').hidden=!cls||panel!=='outlets';ui('study').hidden=!cls||panel!=='study';
+    if(cls){
+      ui('outlet-count').textContent=state.outlets+' eingebaut';ui('port-total').textContent=state.outlets+(state.outlets===1?' Luftauslass':' Luftauslässe');ui('port-flow').textContent=(state.q/state.outlets).toFixed(1)+' m³/h je';
+      ui('study-count').textContent=[state.volumeDone,state.demandDone,state.splitDone].filter(Boolean).length+' / 3 berechnet';
+      ui('tech-count').textContent=[state.vr,state.sd,state.ec].filter(Boolean).length+' / 3 eingebaut';
+      for(const [action,key,cost,text] of [['regulator','vr',450,'vr-cost'],['class-silencer','sd',650,'class-sd-cost'],['class-fan','ec',1600,'class-fan-cost']]){act(action).dataset.installed=String(state[key]);act(action).setAttribute('aria-pressed',String(state[key]));ui(text).textContent=state[key]?'Ausbauen · +'+num(cost):'CHF '+num(cost);}
+      act('remove-outlet').disabled=state.outlets<=1;act('add-outlet').disabled=state.outlets>=4;
+      const task=studyTask();$$('[data-answer]').forEach((b,i)=>{b.textContent=task.answers[i]+' '+task.unit;b.dataset.answerState=studyError===i?'wrong':state[task.key]&&task.answers[i]===task.correct?'correct':'';b.setAttribute('aria-label',b.textContent);});
+    }
+    world.setAttribute('aria-label',cls?'Schulzimmer für acht Lernende':'Dreidimensionales Büro');canvas.setAttribute('aria-label',(cls?'Schulzimmer. ':'Büro. ')+'Tippen: laufen oder Bauteil wählen. Ziehen: Kamera drehen. Plus und Minus: Zoom.');
+    act('silencer').dataset.installed=String(state.sd);act('fan').dataset.installed=String(state.ec);
+    act('silencer').setAttribute('aria-pressed',String(state.sd));act('fan').setAttribute('aria-pressed',String(state.ec));
+    ui('sd-cost').textContent=state.sd?'Entfernen · +650':'CHF 650';
+    ui('fan-cost').textContent=state.ec?'Ausbauen · +1\'600':'EC · CHF 1\'600';
+    ui('place-name').textContent=state.mission===1?'Kanalweg':'Luftauslass';
+    ui('outlet-name').textContent=state.mission===1?ROUTES[state.route].name:'Position '+ 'ABC'[state.site]+' → ändern';
+    ui('tools').hidden=cls||placing;ui('sites').hidden=cls||!placing||state.mission===1;ui('routes').hidden=cls||!placing||state.mission===0;
+    act('check').hidden=placing||(cls&&panel!=='menu');act('cancel-place').hidden=!(placing||(cls&&panel!=='menu'));
+    act('plan').setAttribute('aria-pressed',String(plan));
+    $('.af-flow').classList.toggle('af-first-action',!interacted);
+    $$('.af-tools button').forEach(b=>b.classList.remove('af-nudge'));
+    $$('.af-sites button').forEach(b=>b.dataset.installed=String(Number(b.dataset.site)===state.site));
+    $$('.af-routes button').forEach(b=>b.dataset.installed=String(Number(b.dataset.route)===state.route));
+    root.dataset.budgetOver=String(spending()>budget());root.dataset.mission=String(chapter());root.dataset.panel=panel;root.dataset.outlets=String(cls?state.outlets:1);root.dataset.connected=String(connected());
+    paintMeters();syncTutorial();
+  }
+  function paintMeters() {
+    let count=0;const running=connected();
+    for(const k of Object.keys(LIMITS)) {
+      const q=running?quality(k,display[k]):'paused', card=$(`[data-metric="${k}"]`);
+      card.dataset.quality=q;card.querySelector('i').textContent=!running?'−':q==='good'?'✓':'!';
+      if(previousQualities[k]&&previousQualities[k]!==q&&q==='good'){
+        card.classList.remove('af-achieved');void card.offsetWidth;card.classList.add('af-achieved');
+        announce(`${{co2:'Luftqualität',noise:'Lärm',draft:'Komfort',power:'Strom'}[k]}: Ziel erreicht.`);
+      }
+      previousQualities[k]=q;
+      const txt=!running?'—':k==='co2'?num(display[k]):k==='noise'?display[k].toFixed(1):k==='draft'?display[k].toFixed(3):num(display[k]);
+      $(`[data-val="${k}"]`).textContent=txt;
+      card.setAttribute('aria-label',`${{co2:'CO₂',noise:'Lärm',draft:'Zugluft',power:'Strom'}[k]}: ${txt}. ${!running?'Anlage aus: Kanal blockiert':q==='good'?'Ziel erfüllt':'Noch ausserhalb des Ziels'}. Antippen für Erklärung.`);
+      card.dataset.target=target[k].toFixed(3);
+      if(q==='good')count++;
+    }
+    ui('progress').textContent=(!running?'Anlage aus':completed?'✓ Abgenommen':count+' / 4 technische Ziele');
+    if(state.faultMode)ui('progress').textContent=completed?'★ Einsatz geschafft':state.repaired?'Klasse erholt sich':state.roomChecked?'SPUR 2 / 3 · Ursache finden':'SPUR 1 / 3 · Spur suchen';
+    ui('progress').dataset.ready=String(stable>=ASSUMPTIONS.stabilitySeconds);
+    act('check').disabled=modalOpen||(!classroom()&&(!running||stable<ASSUMPTIONS.stabilitySeconds||spending()>budget()));
+    act('check').title='Mission prüfen und abschliessen';act('trial').title='Aufbau testen, ohne die Mission abzuschliessen';act('check').textContent=classroom()&&(!planReady()||spending()>budget())?'Mission prüfen':!running?'Blockiert':stable>=ASSUMPTIONS.stabilitySeconds?'Mission prüfen':allGood(target)?'Messen …':'Prüfen';
+    act('check').style.setProperty('--ready',Math.min(100,stable/ASSUMPTIONS.stabilitySeconds*100)+'%');
+    let title, text;
+    if(classroom()){
+      if(panel==='study'){const task=studyTask();title=task.title;text=task.hint;}
+      else if(spending()>budget()){title=`CHF ${num(spending()-budget())} über Budget`;text='Baue unnötige Bauteile aus. Im Spiel bekommst du das Geld zurück.';}
+      else if(panel==='technology'){title='Bauteile verändern Luft, Lärm und Strom';text='Luftregler: genau. Schalldämpfer: leiser. EC-Ventilator: sparsamer.';}
+      else if(panel==='outlets'){title=`${state.outlets} Auslässe teilen sich ${state.q} m³/h`;text='Ein weiterer kostet CHF 350. Beobachte Lärm und Zugluft.';}
+      else if(!interacted){title='Mach frische Luft für die Klasse';text='Tippe zuerst auf +. Was passiert mit CO₂ und Lärm?';}
+      else if(state.outlets<2&&state.q>=240&&!state.volumeDone){title='Mehr Luft. Aber alles an einem Ort!';text='Auslässe → Einbauen. Wird es leiser und angenehmer?';act('outlets').classList.add('af-nudge');}
+      else if(!state.volumeDone||!state.demandDone){title='Ausprobiert? Jetzt passend planen.';text='Raumplan öffnen oder im Testlauf deinen Aufbau prüfen.';act('study').classList.add('af-nudge');}
+      else if(!state.vr){title='Ziel: 288 m³/h. Jetzt wird es genau.';text='Öffne Bauteile und baue einen Luftregler ein.';act('technology').classList.add('af-nudge');}
+      else if(!state.vrActive){title='Luftregler eingebaut, aber noch nicht aktiv';text='Tippe auf die Luftmenge und aktiviere den Luftregler vor Ort.';}
+      else if(Math.abs(state.q-288)>2){title='Stelle deinen berechneten Bedarf ein';text='Tippe auf die Zahl und gib 288 m³/h ein.';}
+      else if(state.outlets<2){title='Ein Luftauslass bekommt die ganze Luft';text='Öffne Luftauslässe und verteile die Luft auf zwei Orte.';}
+      else if(!state.splitDone){title='Neue Luftauslässe, neue Verteilung';text='Raumplan: Wie viel erhält jeder Luftauslass?';}
+      else if(target.noise>40){title='Gute Luft, aber zu laut zum Lernen';text='Schalldämpfer oder mehr Luftauslässe? Vergleiche die Kosten.';}
+      else if(target.power>85){title='Jetzt noch Strom sparen';text='Teste den sparsameren EC-Ventilator.';}
+      else if(stable<2){title='Die Messwerte werden stabil …';text='Warte kurz, bis alle Werte ruhig sind.';}
+      else {title=completed?'Mission geschafft!':'Berechnet. Gebaut. Bereit?';text='Prüfe jetzt deinen Plan und die Anlage.';}
+    }
+    else if(placing){title=state.mission===1?'Wie kommst du am Träger vorbei?':'Plane den Weg der Luft';text=state.mission===1?'Umfahren: seitlich vorbei. Unterfahren: runter, darunter durch, wieder hoch.':'A am Tisch · B im Gang · C am Fenster. Teste!';}
+    else if(!running){title='Der Kanal trifft den Träger';text='Anlage aus. Tippe auf Kanalweg und plane neu.';act('place').classList.add('af-nudge');}
+    else if(target.co2>1000){title='Das Team braucht frische Luft';text='Schiebe die Luftmenge nach rechts. Was passiert?';}
+    else if(display.co2>1000){title='Die Luft wird ausgetauscht …';text='Warte kurz: Der CO₂-Wert reagiert verzögert.';}
+    else if(target.noise>40){
+      title=state.sd?'Zu viel des Guten':'Gute Luft. Aber dieser Lärm!';
+      text=state.sd?'Auch Luftbewegung macht Lärm. Reduziere etwas.':'Teste einen Schalldämpfer im Lüftungskanal.';
+      if(!state.sd)act('silencer').classList.add('af-nudge');
+    }else if(target.draft>.22){title='Brrr … Wind am Arbeitsplatz';text=state.mission===1?'Weniger Luft oder um den Träger herum?':'Tippe auf Auslass. Welcher Ort ist angenehmer?';act('place').classList.add('af-nudge');}
+    else if(target.power>85){title='Jetzt noch Strom sparen';text=state.ec?'Luftmenge oder Luftweg verbessern.':'Kürzerer Luftweg oder sparsamer EC-Ventilator? Du entscheidest.';}
+    else if(stable<2){title='Messwerte stabilisieren …';text='Die Anlage muss alle vier Ziele gleichzeitig halten.';}
+    else {title=completed?'Auftrag erfüllt. Was geht noch?':'Deine Anlage ist bereit!';text=completed?'Finde eine zweite Lösung. Ausbauen ist im Spiel kostenlos.':'Alle vier Ziele stimmen. Jetzt Mission prüfen!';}
+    if(state.faultMode&&panel==='menu'){title=!state.roomChecked?'Warum kommt keine Luft an?':!state.repaired?'Finde die Ursache am Gerät':completed?'Klasse gerettet. Stark gemacht!':'Die Klasse atmet auf';text=!state.roomChecked?'Zum orangefarbenen Messpunkt laufen und messen.':!state.repaired?'Gerät untersuchen. Erst die Ursache, dann die Reparatur.':'Beobachte die Reaktionen. Bleiben alle Ziele grün?';}
+    $('.af-mission').dataset.alert=String(spending()>budget());ui('mission').textContent=title;ui('hint').textContent=text;
+    const showEffect=elapsed<feedbackUntil&&spending()<=budget();ui('effect').hidden=!showEffect;ui('hint').hidden=showEffect;
+  }
+  function openModal(title,tag,html,buttons) {
+    ui('modal').dataset.kind='';
+    if(!modalOpen)lastFocus=document.activeElement;modalOpen=true;ui('modal').hidden=false;
+    for(const el of [$('.af-head'),$('.af-meters'),world,$('.af-controls')])el.inert=true;
+    $('#fc05-modal-title').textContent=title;ui('modal-tag').textContent=tag;ui('modal-content').innerHTML=html;
+    const actions=ui('modal-actions');actions.replaceChildren();
+    for(const [label,fn] of buttons){const b=document.createElement('button');b.textContent=label;b.type='button';b.addEventListener('click',fn);actions.append(b);}
+    act('close-modal').focus();syncSound();
+  }
+  function closeModal() {
+    if(!modalOpen)return;modalOpen=false;ui('modal').hidden=true;
+    for(const el of [$('.af-head'),$('.af-meters'),world,$('.af-controls')])el.inert=false;
+    if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});paintMeters();syncSound();
+  }
+  function help() {
+    openModal('Du planst. Das Team spürt es.','FLOWCRAFT · MISSION GEBÄUDETECHNIK',
+      '<p>Du planst für acht Lernende im Schulzimmer oder vier Personen im Büro. Bring <b>CO₂, Lärm, Zugluft und Strom</b> gleichzeitig in den Zielbereich – ohne dein Budget zu überschreiten.</p>'+
+      '<p><b>So spielst du:</b> Probiere etwas aus, beobachte die Wirkung und verbessere deine Anlage. Es gibt mehrere gute Lösungen. Ausbauen gibt dir im Spiel den ganzen Betrag zurück.</p>'+
+      '<p><b>Deine Missionen:</b> Im Schulzimmer findest du heraus, wie viel Luft gebraucht wird. Danach verteilst du die Luft, machst die Anlage leiser und sparst Strom. Später löst du einen Fehlerfall und ein Platzproblem im Gebäude.</p>'+
+      '<p><b>Bewegen:</b> Boden antippen oder W A S D. Bauteil antippen: automatisch hinlaufen. Im Büro zum orangefarbenen Messpunkt gehen und Luftzug messen. Kamera durch Ziehen drehen. Zwei Finger oder + / − zum Zoomen. ⌂ bringt die Übersicht zurück.</p>'+
+      '<p class="af-note">Vereinfachtes Lernmodell mit stark beschleunigten Messwerten. Ziele, Widerstände im Luftweg, Wirkungsgrade und CHF-Beträge sind Spielannahmen, keine Planungs- oder Normwerte. Farbige Luft und Schallringe machen unsichtbare Vorgänge sichtbar. Der optionale Ton ist illustrativ, nicht kalibriert. Keine Konten, keine Datenerfassung, keine Online-Verbindung nötig.</p>',
+      [['Weiterspielen',closeModal],['Einsätze',missionBoard],['Challenge direkt',skipTutorial],[sound?'Ton ausschalten':'Ton einschalten',async()=>{await toggleSound();help();}],['Vollbild',()=>{closeModal();toggleFullscreen();}],['Level 1 starten',()=>startMission(2,'first')],['Büro üben',()=>startMission(0)]]);
+  }
+  function commission() {
+    if(classroom()){classroomReport();return;}
+    if(state.mission===0&&!inspectionDone){toast('Prüfe zuerst den Luftzug am orangefarbenen Messpunkt. Boden antippen oder W A S D.');return;}
+    if(!connected()||spending()>budget()||!allGood(display)||!allGood(target)||stable<ASSUMPTIONS.stabilitySeconds){toast('Noch nicht bereit: Freien Kanalweg und vier stabile Ziele prüfen.');return;}
+    completed=true;approvedBefore=true;celebrate=1;feedback('Auftrag erfüllt · vier Ziele im Gleichgewicht');
+    const old=model({...state,ec:false}).power, saving=Math.round((1-target.power/old)*100);
+    const badges=`<div class="af-badges"><span>✓ Luftretter/in</span><span>${state.mission===1?'◆ Koordinations-Profi':!state.ec?'◆ Budget-Profi':state.site===1?'◆ Komfort-Profi':'◆ Effizienz-Profi'}</span></div>`;
+    openModal(state.mission===1?'Umbau geschafft. Stark geplant!':'Das Team kann aufatmen!',state.mission===1?'KAPITEL 3 / 3 · MISSION GESCHAFFT':'KAPITEL 2 / 3 · MISSION GESCHAFFT',
+      ratingMarkup(state.mission===1?'coordination':'office')+badges+'<p>Frische Luft, Ruhe und kein Wind im Nacken. Du hast die Anforderungen gemeinsam gelöst.</p>'+
+      `<div class="af-report"><div>Luftqualität<b>${num(display.co2)} ppm</b></div><div>Akustik<b>${display.noise.toFixed(1)} dB(A)</b></div><div>Komfort<b>${display.draft.toFixed(3)} m/s</b></div><div>Ventilator<b>${num(display.power)} W</b></div></div>`+
+      `<p><b>CHF ${num(budget()-spending())} übrig.</b> Deine Bauteile kosten CHF ${num(spending())}.</p>`+
+      (state.mission===1?`<p><b>${ROUTES[state.route].name}:</b> ${FLOWCRAFT_MODEL.branchLength(state).toFixed(2)} m Kanal, ohne Kollision. ${state.route===1?'Seitlich am Träger vorbei, dafür ein längerer Luftweg.':'Die sichtbare Unterführung spart Kanalweg und steigt danach wieder auf Normalhöhe.'}</p>`:'')+
+      (state.ec?`<p><b>Dein EC-Ventilator:</b> ${num(old)} → ${num(target.power)} W bei gleicher Luftmenge. ${saving}% weniger Stromverbrauch im Spiel.</p>`:
+        '<p><b>Dein kurzer Luftweg:</b> Die Luft hat weniger Widerstand. So braucht der bestehende Ventilator weniger Energie.</p>')+
+      '<p class="af-note">Gebäudetechnikplaner/in EFZ: Du planst Wege, vergleichst Bauteile und prüfst die fertige Anlage. Welche zweite Lösung findest du?</p>',
+      [...(state.mission===0?[['Weiter: Umbau',nextMission]]:[]),['Nochmals',reset],['Missionen',missionBoard],['Andere Lösung finden',closeModal]]);
+    announce('Mission geschafft. Alle vier Anforderungen sind erfüllt.');
+  }
+  async function toggleSound() {
+    if(sound){sound=false;syncSound();return;}
+    try{
+      if(!audio){
+        const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error('Audio unavailable');
+        audio=new AC();audioGain=audio.createGain();audioGain.gain.value=0;
+        audioFilter=audio.createBiquadFilter();audioFilter.type='lowpass';
+        const b=audio.createBuffer(1,audio.sampleRate,audio.sampleRate), data=b.getChannelData(0);
+        let prev=0;for(let i=0;i<data.length;i++){prev=.7*prev+.3*(Math.random()*2-1);data[i]=prev;}
+        noiseSource=audio.createBufferSource();noiseSource.buffer=b;noiseSource.loop=true;
+        noiseSource.connect(audioFilter);audioFilter.connect(audioGain);audioGain.connect(audio.destination);noiseSource.start();
+      }
+      await audio.resume();sound=true;syncSound();
+    }catch(e){sound=false;toast('Ton ist in diesem Browser nicht verfügbar.');}
+  }
+  function syncSound(){if(!audioGain)return;const active=sound&&connected()&&!modalOpen&&!document.hidden&&visible;
+    audioGain.gain.setTargetAtTime(active?clamp((display.noise-23)/120,0,.16):0,audio.currentTime,.15);
+    audioFilter.frequency.setTargetAtTime(180+state.q*4,audio.currentTime,.15);
+  }
+
+  // Tiny orthographic 3D renderer. 3D meshes are projected and depth-sorted on Canvas;
+  // no GPU, CDN, framework, assets or WebGL context is required for this small scene.
+  const faces=[], staticFaces=[], light=[-.38,.83,.41], RGB=new Map();let pool=faces;
+  function rgb(hex){if(!RGB.has(hex)){let h=hex.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');RGB.set(hex,[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)));}return RGB.get(hex);}
+  function face(v,c,layer=2,a=1,two=false){
+    const u=v[1].map((n,i)=>n-v[0][i]), w=v[2].map((n,i)=>n-v[0][i]);
+    let n=[u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0]], l=Math.hypot(...n)||1;n=n.map(x=>x/l);
+    const bright=.69+.31*Math.max(0,n[0]*light[0]+n[1]*light[1]+n[2]*light[2]);
+    const col=rgb(c).map(x=>Math.round(clamp(x*bright,0,255)));
+    pool.push({v,n,fill:`rgb(${col.join(',')})`,layer,a,two});
+  }
+  function box(x,y,z,w,h,d,c,ry=0,rz=0,layer=2,a=1){
+    y+=meshLift;
+    const sy=Math.sin(ry),cy=Math.cos(ry),sz=Math.sin(rz),cz=Math.cos(rz);
+    const v=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([vx,vy,vz])=>{
+      const X=vx*w/2,Y=vy*h/2,Z=vz*d/2;const rx=X*cz-Y*sz,yy=X*sz+Y*cz;
+      return [x+rx*cy+Z*sy,y+yy,z-rx*sy+Z*cy];
+    });
+    [[4,5,6,7],[1,0,3,2],[5,1,2,6],[0,4,7,3],[3,7,6,2],[0,1,5,4]].forEach(ids=>face(ids.map(i=>v[i]),c,layer,a));
+  }
+  function cylinder(x,y,z,r,h,c,segments=10,layer=2,topRadius=r){
+    const top=[],bottom=[];for(let i=0;i<segments;i++){const t=i/segments*Math.PI*2;top.push([x+Math.cos(t)*topRadius,y+h/2,z+Math.sin(t)*topRadius]);bottom.push([x+Math.cos(t)*r,y-h/2,z+Math.sin(t)*r]);}
+    face([...top].reverse(),c,layer);
+    for(let i=0;i<segments;i++){const j=(i+1)%segments;face([bottom[i],top[i],top[j],bottom[j]],c,layer);}
+  }
+  function disc(x,y,z,rx,rz,c,a=1,layer=1){
+    const v=[];for(let i=0;i<24;i++){const t=-i/24*Math.PI*2;v.push([x+Math.cos(t)*rx,y,z+Math.sin(t)*rz]);}face(v,c,layer,a,true);
+  }
+  function plant(x,z,h=1){
+    disc(x,.008,z,.5,.42,'#39524c',.10);
+    cylinder(x,.28,z,.31,.56,'#c4916d',12,2,.39);
+    cylinder(x,.65,z,.045,.72,'#617352',7);
+    for(let i=0;i<7;i++){const t=i*2.4;box(x+Math.cos(t)*.18,.65+i*.085*h,z+Math.sin(t)*.15,.35,.11,.6,i%2?'#709576':'#567e66',t,-.3+i*.06);}
+  }
+  function buildStatic(){
+    staticFaces.length=0;pool=staticFaces;
+    box(0,-.22,0,10.25,.44,8.2,'#4769a4',0,0,0);
+    box(0,.008,0,10,.06,8,'#d8c4a6',0,0,0);
+    for(let i=-7;i<=7;i++)box(i*.65,.046,0,.014,.003,7.94,'#bcab90',0,0,1,.45);
+    for(let i=-3;i<4;i++)for(let j=-5;j<5;j++)box(j+.5+(i%2)*.3,.047,i*1.12,.015,.002,1.1,'#cab699',0,0,1,.32);
+    // Far wall and windows are cutaway elements, intentionally drawn behind furniture.
+    box(0,1.8,-4,10,.0+3.6,.15,'#c8dafa',0,0,1);
+    for(const x of[-2.8,.8]){
+      box(x,2,-3.9,2.45,1.65,.06,'#5f7f87',0,0,1.15);
+      box(x,2,-3.855,2.24,1.44,.04,'#81d9ee',0,0,1.15);
+      box(x,1.5,-3.82,2.18,.34,.04,'#95bac5',0,0,1.15);
+      for(let i=0;i<5;i++)box(x-.9+i*.41,1.5+(i%3)*.1,-3.78,.27,.3+(i%3)*.2,.04,'#80a4b2',0,0,1.15);
+      box(x,2,-3.72,.045,1.5,.08,'#688c96',0,0,1.15);
+      box(x,1.18,-3.74,2.7,.095,.33,'#eee9dc',0,0,1.15);
+    }
+    // Desks, screens, keyboards, chairs and mugs.
+    for(const [x,z,rot] of[[-2.2,-1.25,0],[2.2,-1.25,0],[-2.2,1.7,Math.PI],[2.2,1.7,Math.PI]]){
+      disc(x,.052,z,1.17,.65,'#526154',.12);
+      const at=(dx,dz)=>[x+dx*Math.cos(rot)+dz*Math.sin(rot),z-dx*Math.sin(rot)+dz*Math.cos(rot)];
+      box(x,.86,z,2.15,.13,.96,'#a97e56');box(x,.938,z,2.19,.025,.99,'#dfb17b');
+      for(const dx of[-.88,.88])for(const dz of[-.35,.35]){const p=at(dx,dz);box(p[0],.44,p[1],.065,.83,.065,'#536c74');}
+      let p;
+      if(!classroom()){
+      p=at(0,-.18);box(p[0],1.06,p[1],.065,.26,.065,'#425e68');box(p[0],1.28,p[1],.81,.46,.07,'#3c5967',rot);
+      p=at(0,-.13);box(p[0],1.3,p[1],.7,.34,.03,'#79b6bb',rot);
+      p=at(-.12,-.105);box(p[0],1.36,p[1],.31,.022,.025,'#cbe7da',rot);
+      p=at(.1,-.103);box(p[0],1.27,p[1],.31,.023,.025,'#a6d1d1',rot);
+      p=at(0,.24);box(p[0],.966,p[1],.57,.025,.21,'#506c75',rot);
+      }else{
+        for(const dx of[-.52,.52]){p=at(dx,.05);box(p[0],.972,p[1],.52,.038,.41,'#fcf1d9',rot);box(p[0],.994,p[1],.02,.008,.38,'#7caca3',rot);p=at(dx,-.28);box(p[0],.98,p[1],.37,.06,.25,dx<0?'#6b9fa7':'#ce8966',rot);p=at(dx+.32,.17);box(p[0],.97,p[1],.03,.02,.35,'#d6a54c',rot);}
+      }
+      p=at(.79,.2);cylinder(p[0],1.045,p[1],.095,.17,'#ecdbc0',10);
+      for(const seat of(classroom()?[-.5,.5]:[0])){
+      p=at(seat,.94);box(p[0],.48,p[1],.54,.1,.5,'#477dbb',rot);cylinder(p[0],.24,p[1],.055,.44,'#385360',8);
+      p=at(seat,1.16);box(p[0],.75,p[1],.56,.51,.075,'#619dda',rot);}
+    }
+    if(classroom()){
+      box(3.12,1.55,-3.78,2.8,1.3,.07,'#7f9c87',0,0,1.2);box(3.12,1.55,-3.73,2.62,1.12,.035,'#285b50',0,0,1.2);
+      for(let i=0;i<3;i++)box(2.6,1.84-i*.23,-3.7,1.1-i*.16,.024,.02,'#d8e8c5',0,0,1.2);
+      box(3.12,.87,-3.64,2.95,.05,.23,'#bca077',0,0,1.2);
+    }
+    plant(-4.15,2.8,1.3);plant(4.2,-1.5,1);
+    box(-4.1,.57,-2.6,1.3,1.14,.63,'#a2b6ab');box(-4.1,1.18,-2.6,1.38,.085,.72,'#d8d8c8');
+    for(const x of[-4.42,-3.78])box(x,.6,-2.265,.055,.3,.025,'#5d7c76');
+    box(-4.15,1.3,-2.6,.45,.16,.34,'#ae7457');box(-4.15,1.41,-2.6,.34,.035,.27,'#e4d8b5');
+    // Return air remains connected to the unit, with its own colour stripe.
+    box(-.3,2.48,-3.63,7.6,.22,.25,'#b4b8b1');box(-.3,2.615,-3.63,7.6,.018,.11,'#d79963');
+    box(-4.25,2.48,-3.58,.65,.5,.09,'#c7d4cc');
+    for(let i=0;i<5;i++)box(-4.25,2.31+i*.08,-3.51,.53,.025,.035,'#6b8486');
+    // Supply duct: the terminal branch is rebuilt dynamically when moved.
+    box(-.2,3.03,-2.9,7.7,.39,.48,'#a9bdc3');box(-.2,3.24,-2.9,7.7,.02,.14,'#5ea9b6');
+    for(let x=-3.7;x<3.4;x+=.78)box(x,3.03,-2.9,.035,.425,.52,'#869da7');
+    for(const x of[-3.3,-.1,2.2]){box(x,3.47,-2.9,.025,.45,.025,'#557583');box(x,3.32,-2.9,.58,.03,.025,'#748e98');}
+    pool=faces;
+  }
+  function human(x,z,c,a,time,mood,heroFlag=false,moving=false){
+    const cA=Math.cos(a),sA=Math.sin(a),shiver=mood==='draft'&&!reduced?Math.sin(time*27)*.018:0;
+    function part(dx,y,dz,w,h,d,col,rz=0){const X=dx+shiver;box(x+X*cA+dz*sA,y,z-X*sA+dz*cA,w,h,d,col,a,rz);}
+    const walk=moving&&!reduced?Math.sin(time*10)*.16:0;
+    const tired=mood==='tired', stuffy=mood==='stuffy', draught=mood==='draft', loud=mood==='noise', happy=mood==='good'&&completed;
+    const fan=stuffy&&!reduced?Math.sin(time*8)*.16:0;
+    disc(x,.068,z,.33,.23,'#193e48',.16,1);
+    part(-.13,.3,walk,.17,.46,.19,'#38535f',walk*.3);part(.13,.3,-walk,.17,.46,.19,'#38535f',-walk*.3);
+    part(-.13,.086,.05+walk,.21,.12,.32,'#294650');part(.13,.086,.05-walk,.21,.12,.32,'#294650');
+    part(0,tired?.69:.81,tired?.17:0,.46,.59,.29,c,tired?.15:0);
+    if(heroFlag){part(0,.82,.156,.47,.065,.018,'#fbeb98');part(0,.66,.158,.47,.06,.018,'#fbeb98');}
+    const armY=happy?1.15:loud?1.12:stuffy||draught?.98:.79;
+    part(-.32,armY,loud?.04:0,.13,.44,.16,c,happy?-.9:loud?-.82:walk);
+    part(.32,armY,loud?.04:0,.13,.44,.16,c,happy?.9:loud?.82:-walk);
+    const handY=happy?1.39:loud?1.32:stuffy?1.18:.58;
+    part(-.34,handY,.035+fan,.15,.14,.16,'#d8ac86');
+    if(stuffy)part(-.36,1.24,.15+fan,.27,.27,.025,'#fff0be',fan*2);part(.34,handY,.035,.15,.14,.16,'#d8ac86');
+    part(0,1.16,0,.12,.15,.13,'#d8ac86');
+    const headY=1.39+(tired?-.24-(reduced?0:Math.max(0,Math.sin(time*1.3))*.06):happy&&!reduced?Math.sin(time*5)*.04:0),headZ=tired?.25:0;
+    part(0,headY,headZ,.35,.36,.33,'#dfb790',tired?.08:0);
+    part(0,headY+.17,headZ,.37,.095,.35,heroFlag?'#edb94d':'#4c554f');
+    if(heroFlag){part(0,headY+.105,.09,.46,.05,.46,'#f4c75e');}
+    part(-.084,headY+.025,.177+headZ,.037,tired?.016:.028,.013,'#3e5454');part(.084,headY+.025,.177+headZ,.037,tired?.016:.028,.013,'#3e5454');
+    part(0,headY-.07,.18+headZ,tired?.08:.12,tired?.075:.025,.015,tired?'#956353':'#fff1d5');
+  }
+  function technician(t){
+    const moving=hero.path.length>0, stride=reduced?0:Math.sin(hero.step*5), idle=reduced?0:Math.sin(t*2.8)*.025;
+    const lift=reduced?0:moving?Math.abs(stride)*.055:celebrate>0?Math.abs(Math.sin(t*9))*.15:idle;
+    const action=installation?.kind||siteAction?.kind||serviceTask?.kind||(tutorialMeasure||inspecting?'measure':ui('reward').dataset.mood==='puzzled'&&beat?'think':null);
+    const a=hero.a,ca=Math.cos(a),sa=Math.sin(a);
+    const part=(x,y,z,w,h,d,c,rz=0)=>box(hero.x+(x*ca+z*sa)*1.12,y*1.12+lift+(action==='outlets'?-.1:0),hero.z-(x*sa-z*ca)*1.12,w*1.12,h*1.12,d*1.12,c,a,rz);
+    disc(hero.x,.065,hero.z,.43,.3,'#163950',.24,1);
+    disc(hero.x,.071,hero.z,.47,.34,'#47efd3',.15,1);
+    for(const side of [-1,1]){
+      const step=moving?stride*side*.2:0;
+      part(side*.15,.34,step,.22,.49,.24,'#233c59',step*.35);
+      part(side*.15,.1,.08+step,.26,.17,.4,'#193045');
+      part(side*.15,.06,.13+step,.27,.045,.39,'#65f0cf');
+      const reach=reaction>0||inspecting>0||!!serviceTask||!!tutorialMeasure||!!siteAction||!!installation;
+      part(side*.37,reach?1.03:.89,.02,.2,.43,.24,side<0?'#f9a34d':'#23b9b0',reach?side*(action==='ec'?1.1:action==='sd'?.35:action==='think'?.15:.65)+(action==='vr'&&!reduced?Math.sin(t*25)*.12:0):-step);
+      part(side*.4,reach?1.22:.65,reach?.22:.04-step,.18,.18,.19,'#e5ad87');
+    }
+    part(0,.9,0,.59,.65,.36,'#168e98');
+    part(-.2,1.03,.2,.17,.38,.06,'#f9ac50');
+    part(.14,.99,.2,.16,.15,.04,'#b5ffe5');
+    part(0,.61,.02,.62,.1,.4,'#263952');
+    part(.34,.61,.04,.15,.22,.2,'#f8b456');
+    part(0,.99,-.26,.42,.49,.19,'#263e5d');
+    part(0,1.04,-.37,.28,.09,.03,'#58ebd2');
+    part(0,1.18,.04,.63,.15,.4,'#ffb34f');
+    part(-.27,1.08,-.1,.16,.34,.09,'#f18d3d',reduced?-.12:Math.sin(t*5)*.12);
+    part(-.29,1.43,0,.12,.2,.24,'#243c59');
+    part(-.36,1.45,.08,.04,.1,.12,'#65ffe0');
+    part(0,1.38,0,.43,.43,.39,'#e5ad87');
+    part(0,1.62,-.015,.47,.17,.41,'#283c55');
+    part(-.14,1.74,0,.2,.18,.22,'#283c55',-.32);
+    part(.1,1.7,-.02,.24,.16,.27,'#283c55',.28);
+    part(0,1.57,.2,.48,.1,.09,'#f8a548');
+    part(-.12,1.57,.26,.16,.075,.035,'#73f2ea');
+    part(.12,1.57,.26,.16,.075,.035,'#73f2ea');
+    const eyeH=!reduced&&Math.sin(t*1.7)>.993?.012:.055;
+    part(-.09,1.4,.205,.046,eyeH,.02,'#213c51');part(.09,1.4,.205,.046,eyeH,.02,'#213c51');
+    part(-.09,1.47,.21,.1,.026,.02,'#283c55',-.12);part(.09,1.47,.21,.1,.026,.02,'#283c55',.12);
+    part(.02,1.28,.205,.14,.035,.02,'#fff0d2',-.1);
+    if(action==='ec'){part(.42,1.25,.33,.33,.33,.11,'#68dbd2');part(.42,1.25,.4,.2,.2,.04,'#264859');}
+    else if(action==='sd'){part(.42,1.2,.32,.52,.18,.19,'#9eb5cc');}
+    else if(action==='repair'){part(.42,1.22,.32,.28,.33,.1,'#ffd27c');}
+    else if(inspecting>0||serviceTask||tutorialMeasure||siteAction||installation){part(.42,1.25,.33,.25,.29,.09,'#243c5a');part(.42,1.27,.39,.17,.17,.02,'#60f1d4');}
+  }
+  function movingWorld(t) {
+    meshLift=0;
+    if(classroom()&&firstImpression){
+      // The opening panel rotates into the room; the wall opening and airflow make the choice physical.
+      const a=windowPhase*1.05;
+      box(.8+Math.sin(a)*.48,2,-3.69+Math.sin(a)*.18,1.12,1.42,.055,'#92d9e7',a,0,1.3,.9);
+      if(windowPhase>.05){
+        const gust=reduced?.45:(flowPhase*.7)%1;
+        for(let i=0;i<5;i++){
+          const u=(gust+i/5)%1;box(.8+(i-2)*.18,2.4-u*1.25,-3.55+u*2.5,.04,.04,.28,'#dcffff',0,-.4,3,(1-u)*windowPhase*.85);
+        }
+      }
+    }
+    const guide=hintTarget();
+    if(guide){
+      const [gx,,gz]=guide,beat=reduced?1:1+Math.sin(t*(guidance.level?5:2))*(guidance.level?.14:.035);
+      disc(gx,.075,gz,.67*beat,.67*beat,'#69f9d2',.3,1);disc(gx,.08,gz,.33,.33,'#dcfff2',.6,1);
+      if(guidance.level>=2)for(let i=1;i<=8;i++){const u=i/9;disc(lerp(hero.x,gx,u),.08,lerp(hero.z,gz,u),.055,.055,'#baffdb',.5,1);}
+      if(guidance.level===3){const h=.65+(reduced?0:Math.sin(t*4)*.08);box(gx,h,gz,.12,.38,.12,'#ffd769');box(gx-.12,h-.16,gz,.28,.09,.12,'#ffd769',0,.65);box(gx+.12,h-.16,gz,.28,.09,.12,'#ffd769',0,-.65);}
+    }
+
+    if(destination){
+      const d=destination,k=reduced?1:1+Math.sin(t*7)*.1;
+      disc(d.x,.075,d.z,.56*k,.56*k,'#5af2d8',.35,1);
+      disc(d.x,.078,d.z,.28,.28,'#e7fff4',.5,1);
+      disc(d.point[0],d.point[1]+.22,d.point[2],.48,.48,'#5af2d8',.35,1);
+      hero.path.filter((_,i)=>i%3===0).forEach(p=>disc(p.x,.073,p.z,.06,.06,'#92ffe0',.6,1));
+    }
+    if(state.mission===0||state.faultMode&&!state.roomChecked){
+      const c=inspectionDone?'#5af2d8':'#ffb650';
+      disc(INSPECTION.x,.075,INSPECTION.z,.65,.65,c,.28,1);
+      for(const dx of [-.55,.55])box(dx,.09,INSPECTION.z,.07,.025,.7,c);
+      box(0,.09,INSPECTION.z,.6,.025,.06,c);
+    }
+
+    // Fade foreground cutaway walls rather than letting them hide the office.
+    box(-5,.65,0,.12,1.3,8,'#e1e5da',0,0,1,plan?.09:(sx<0?.1:.82));
+    box(5,.65,0,.12,1.3,8,'#d9e2d9',0,0,1,plan?.09:(sx>0?.08:.75));
+    if(plan){for(let i=-4;i<=4;i++)box(i,.057,0,.008,.004,7.8,'#568d9a',0,0,1,.27);for(let i=-3;i<=3;i++)box(0,.057,i,9.8,.004,.008,'#568d9a',0,0,1,.27);}
+    const stale=connected()?clamp((display.co2-900)/900,0,1):0;
+    disc(-2.2,.061,-.25,1.05,.72,'#e9ab68',stale*.2,1);disc(2.2,.061,.35,1.0,.7,'#e9ab68',stale*.15,1);
+    if(classroom()&&panel==='study'){
+      box(0,.065,0,9.8,.009,7.8,'#56bea8',0,0,1,.13);
+      if(studyStage===0)for(let level=1;level<=3;level++)box(0,level*1.2,0,9.8,.01,7.8,'#5ebaa6',0,0,1,.055);
+    }
+    if(state.mission===1){
+      // Structural geometry and the model's swept-duct collision test share BEAM.
+      box(BEAM.x,BEAM.y,BEAM.z,BEAM.w,BEAM.h,BEAM.d,'#dca958');
+      box(0,BEAM.y+BEAM.h/2+.018,BEAM.z,BEAM.w+.06,.035,BEAM.d+.04,'#f4cf83');
+      for(const X of[-1.6,1.6]){
+        box(X,1.36,BEAM.z,.2,2.72,.24,'#b88d53');
+        box(X,.09,BEAM.z,.38,.12,.42,'#d9bd8d');
+        box(X,2.78,BEAM.z,.34,.12,.42,'#efd3a4');
+      }
+    }
+    const clear=connected();
+    for(const [x,z] of(classroom()?outletSites():[visualSite])){
+    const path=growingPath(FLOWCRAFT_MODEL.branchPath(state,[x,z]));
+    meshLift=installation?.kind==='outlets'&&x===outletSites().at(-1)[0]&&!reduced?installation.left*.65:0;
+    for(let i=1;i<path.length;i++){
+      const a=path[i-1],b=path[i],mid=a.map((v,k)=>(v+b[k])/2),delta=a.map((v,k)=>Math.abs(b[k]-v));
+      const size=[delta[0]+.35,delta[1]+.3,delta[2]+.35];
+      box(...mid,...size,clear?'#abc0c6':'#da927e',0,0,2,clear?1:.35);
+      if(clear){
+        if(delta[1]>.01)box(mid[0],mid[1],mid[2]+.182,.075,size[1],.015,'#53b8be');
+        else box(mid[0],mid[1]+.158,mid[2],delta[0]>.01?size[0]:.1,.018,delta[2]>.01?size[2]:.1,'#53b8be');
+      }
+    }
+    const outletY=FLOWCRAFT_MODEL.outletHeight(state);
+    box(x,outletY+.13,z,.36,.27,.36,'#9db7be');
+    box(x,outletY,z,.92,.12,.92,'#e5eeee');box(x,outletY-.068,z,.77,.025,.77,'#607f8a');
+    for(let i=-2;i<=2;i++)box(x+i*.125,outletY-.09,z,.04,.035,.67,'#d3e6e3');
+    }
+    meshLift=0;
+    if(beamCue&&state.mission===1&&state.route===2){disc(0,BEAM.y+BEAM.h/2+.06,BEAM.z,1.7,.3,'#ffe795',.32,1);}
+    if(classroom()&&state.vr){
+      meshLift=installation?.kind==='vr'&&!reduced?installation.left*.7:0;
+      box(.65,3.03,-2.9,.72,.5,.58,'#4f8490');box(.65,3.43,-2.9,.43,.3,.35,'#ecc15e');
+      box(.65,3.43,-2.711,.26,.17,.03,'#245c61');box(.65,3.43,-2.69,.065,.07,.02,!state.vrActive?'#87969c':Math.abs(state.q-288)<=2?'#a9f3c0':'#f1b56a');
+      box(.65,3.22,-2.9,.045,.16,.045,'#466977');
+    }
+    meshLift=0;
+    // One silencer mesh, driven from state; resetting/removing cannot leave duplicates.
+    if(sdLift>.015){
+      const y=3.03-(1-sdLift)*.7;
+      box(2.72,y,-2.9,.94,.69,.79,'#507f89');box(2.72,y+.365,-2.9,.69,.025,.55,'#9acac8');
+      for(const X of[2.27,3.17])box(X,y,-2.9,.055,.72,.83,'#c3d2cd');
+      for(let i=-1;i<=1;i++)box(2.72+i*.18,y+.397,-2.9,.045,.012,.29,'#588b94');
+    }
+    meshLift=installation?.kind==='ec'&&!reduced?installation.left*.4:0;
+    const fc=state.ec?'#4a8c87':'#6e8590';
+    box(3.91,3.02,-2.99,1.28,1.05,1.15,fc);box(3.91,3.57,-2.99,1.35,.055,1.21,'#c2d3cf');
+    box(3.91,3.02,-2.4,.97,.77,.04,'#294d5c');
+    const fz=-2.365;
+    for(let i=0;i<5;i++){
+      const a=fanPhase+i*Math.PI*2/5, pts=[[.075,-.06],[.32,-.12],[.35,.06],[.14,.08]].map(([X,Y])=>[3.91+X*Math.cos(a)-Y*Math.sin(a),3.02+X*Math.sin(a)+Y*Math.cos(a),fz]);
+      face(pts,state.ec?'#a7ddd3':'#b3c8d0',3,1,true);
+    }
+    box(3.91,3.02,fz+.015,.12,.12,.025,'#7799a3');
+    box(4.4,3.27,-2.388,.055,.095,.04,!clear?'#dd7663':display.power>85?'#f1b764':'#8fe2b0');
+    meshLift=0;
+    if(state.faultMode){
+      const dirty=!state.repaired,col=dirty?'#ba8e65':'#7df1d0';
+      box(4.65,3.06,-2.98,.12,.72,.7,col);
+      if(dirty)for(let i=0;i<7;i++)box(4.73,2.8+(i%4)*.15,-3.17+Math.floor(i/4)*.25,.035,.085,.1,'#70543e');
+      disc(3.85,.076,-2.9,.6,.5,dirty?'#ffb553':'#6af6d0',.3,1);
+    }
+    // Service hatch remains part of the existing unit.
+    box(4.8,3.02,-3.16,.52,.37,.37,'#a9bdc1');
+    const people=classroom()?workers.flatMap(([x,z,col,a])=>[[-.5,.5].map(dx=>[x+dx,z,col,a])]).flat():workers;
+    people.forEach(([wx,wz,col,a],i)=>{
+      const mood=workerMood(i);human(wx,wz,col,a,t+i,mood);
+      if(mood==='tired'||mood==='stuffy'){ // Visible fatigue, not a claim that CO2 itself is visible.
+        const bob=reduced?0:Math.sin(t*3+i)*.08;
+        box(wx+.23,1.57+bob,wz,.08,.13,.06,'#69bfe8');
+      }
+      if(mood==='draft')for(let j=0;j<2;j++){
+        const lift=reduced?.1:(Math.sin(t*6+i+j)+1)*.12;
+        box(wx+.15+j*.28,1.03+lift,wz-.35,.28,.016,.22,'#fff7d5',reduced?0:Math.sin(t*4+j)*.2);
+      }
+    });
+    if(classroom()){human(3.25,-1.65,'#925d9d',.25,t,completed?'good':display.co2>1400?'stuffy':display.noise>40?'noise':'good');}
+    technician(t);
+  }
+  function workerMood(i){
+    if(!connected())return 'waiting';
+    if(!classroom()){if(display.co2>1150)return 'tired';if(display.noise>40)return 'noise';if(display.draft>.22&&i<2)return 'draft';return 'good';}
+    if(firstImpression&&['window-fresh','boost-fresh'].includes(onboarding))return 'good';
+    if(firstImpression&&windowOpen)return i<3?'draft':i<6?'noise':'good';
+    if(firstImpression&&['boost','balance'].includes(onboarding))return i<2?'draft':i<5?'noise':'good';
+    if(firstImpression&&['check','finish'].includes(onboarding))return 'good';
+    // Different seats communicate simultaneous problems. Relief is not the same as all goals met.
+    if(display.co2>1400)return i%3===1?'stuffy':'tired';
+    if(display.draft>LIMITS.draft&&i<2)return 'draft';
+    if(display.noise>LIMITS.noise&&i>=2&&i<=4)return 'noise';
+    if(display.co2>1150&&i%2)return 'tired';
+    return 'good';
+  }
+  const worldPoint=p=>classroom()?[p[0]*.8,p[1]*5/6,p[2]*.75]:p;
+  function proj(p){const [x,yy,z]=worldPoint(p),y=yy-1.4;return [cameraX+(cx*x-sx*z)*scale,cameraY-(-sx*sp*x+cp*y-cx*sp*z)*scale,sx*cp*x+sp*y+cx*cp*z];}
+  function fitCamera(){
+    sx=Math.sin(angle);cx=Math.cos(angle);const pitch=plan?1.15:lerp(.62,.38,closeView.mix);sp=Math.sin(pitch);cp=Math.cos(pitch);
+    let mx=0,lo=Infinity,hi=-Infinity;
+    // Fit actual built geometry, rather than the empty corners of a tall cuboid.
+    const bounds=[...staticFaces.flatMap(f=>f.v),...SITES.map(([x,z])=>[x,3.25,z]),[4.7,3.65,-3.5],[4.7,.1,3.6],[-4.7,.1,3.6]];
+    for(const raw of bounds){const [x,y,z]=worldPoint(raw);mx=Math.max(mx,Math.abs(cx*x-sx*z));const py=-sx*sp*x+cp*(y-1.4)-cx*sp*z;lo=Math.min(lo,py);hi=Math.max(hi,py);}
+    const top=48,bottom=48,usable=Math.max(70,height-top-bottom);
+    scale=Math.max(4,Math.min((width-20)/(2*mx),usable/(hi-lo)))*zoom;
+    cameraX=width/2;cameraY=top+usable/2+(lo+hi)/2*scale;
+    if(closeView.mix){
+      const [x,y,z]=worldPoint(closeView.focus),baseY=cameraY;
+      scale*=lerp(1,width<500?1.72:1.65,closeView.mix);
+      cameraX-=closeView.mix*(cx*x-sx*z)*scale;
+      cameraY=lerp(baseY,height*.54+(-sx*sp*x+cp*(y-1.4)-cx*sp*z)*scale,closeView.mix);
+    }
+    if(!reduced){const focus=installation?.kind==='route'?Math.sin(Math.PI*(1-installation.left/installation.duration))*.13:beat*.025;scale*=1+focus;cameraY+=focus*30;}
+  }
+  function resize(){
+    const r=root.getBoundingClientRect();root.classList.toggle('af-wide',r.width>680&&r.width>r.height*1.3);root.classList.toggle('af-short',r.height<600);
+    const b=world.getBoundingClientRect();width=Math.max(1,b.width);height=Math.max(1,b.height);
+    const dpr=Math.min(devicePixelRatio||1,1.75);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);fitCamera();paintScene(reduced?0:elapsed);
+  }
+  function paintScene(t){
+    faces.length=0;movingWorld(t);
+    const warmth=closeView.mix*clamp((display.co2-1050)/580,0,1);
+    const atmosphere=(cool,warm)=>'rgb('+rgb(cool).map((v,i)=>Math.round(lerp(v,rgb(warm)[i],warmth))).join(',')+')';
+    const bg=ctx.createLinearGradient(0,0,0,height);bg.addColorStop(0,plan?'#c8e6f9':atmosphere('#cee7ff','#eddbbf'));bg.addColorStop(1,plan?'#83b7d7':atmosphere('#87a9de','#aab6c7'));ctx.fillStyle=bg;ctx.fillRect(0,0,width,height);
+    // A soft base shadow anchors the diorama without expensive GPU shadows.
+    const under=proj([0,-.3,0]);ctx.save();ctx.translate(under[0],under[1]);ctx.scale(1,.34);ctx.beginPath();ctx.ellipse(0,0,5.4*scale,3.6*scale,0,0,Math.PI*2);ctx.fillStyle='#31566c13';ctx.fill();ctx.restore();
+    const rendered=[];
+    for(const f of [...staticFaces,...faces]){
+      if(!f.two&&f.n[0]*sx*cp+f.n[1]*sp+f.n[2]*cx*cp<.001)continue;
+      const pp=f.v.map(proj);rendered.push({f,pp,z:pp.reduce((s,p)=>s+p[2],0)/pp.length});
+    }
+    rendered.sort((a,b)=>a.f.layer-b.f.layer||a.z-b.z);
+    for(const {f,pp} of rendered){ctx.beginPath();ctx.moveTo(pp[0][0],pp[0][1]);for(let i=1;i<pp.length;i++)ctx.lineTo(pp[i][0],pp[i][1]);ctx.closePath();ctx.globalAlpha=f.a;ctx.fillStyle=f.fill;ctx.fill();}
+    ctx.globalAlpha=1;
+    // Diagnostic overlays are intentionally visible through the cutaway.
+    if(!installation&&!(guided()&&['measure','unit'].includes(onboarding)))paintAir(t);paintSound(t);paintDimensions();updateLabels();
+    if(beamCue&&state.mission===1&&state.route===2){const route=growingPath(FLOWCRAFT_MODEL.branchPath(state));if(route.length>1)stroke3(route,'#fff3a8',4,.9);}
+    if(pulse>.01){const p=proj([pulsePoint[0],pulseKind==='site'?FLOWCRAFT_MODEL.outletHeight(state):3.2,pulsePoint[1]]);ctx.beginPath();ctx.arc(p[0],p[1],reduced?16:(1-pulse)*27+12,0,Math.PI*2);ctx.lineWidth=3;ctx.strokeStyle=`rgba(21,101,224,${pulse*.85})`;ctx.stroke();}
+    if(repairBurst>0&&!reduced){
+      const origin=proj(beatPoint);
+      for(let i=0;i<16;i++){const a=i*Math.PI/8,r=(2.5-repairBurst)*32;ctx.fillStyle=i%2?'#8dffe0':'#ffe390';ctx.globalAlpha=Math.min(1,repairBurst);ctx.fillRect(origin[0]+Math.cos(a)*r,origin[1]+Math.sin(a)*r*.6,4,4);}ctx.globalAlpha=1;
+    }
+    if(celebrate>0&&!reduced){for(let i=0;i<20;i++){const x=(i*71%width),y=(1-celebrate)*(height+35)-(i*13%60);ctx.fillStyle=i%2?'#19877f':'#d8a238';ctx.globalAlpha=celebrate;ctx.fillRect(x,y,4,7);}ctx.globalAlpha=1;}
+  }
+  function stroke3(points,color,w=1,a=1){const pp=points.map(proj);ctx.beginPath();ctx.moveTo(pp[0][0],pp[0][1]);for(let i=1;i<pp.length;i++)ctx.lineTo(pp[i][0],pp[i][1]);ctx.lineWidth=w;ctx.strokeStyle=color;ctx.globalAlpha=a;ctx.stroke();ctx.globalAlpha=1;}
+  function along(points,t){const ls=[];let total=0;for(let i=1;i<points.length;i++){const l=Math.hypot(...points[i].map((n,k)=>n-points[i-1][k]));ls.push(l);total+=l;}
+    let d=t*total;for(let i=0;i<ls.length;i++){if(d<=ls[i]||i===ls.length-1)return points[i].map((n,k)=>lerp(n,points[i+1][k],d/(ls[i]||1)));d-=ls[i];}return points[0];}
+  function paintAir(t){
+    let branch=FLOWCRAFT_MODEL.branchPath(state,visualSite);
+    if(!connected()){
+      ctx.setLineDash([5,4]);stroke3(branch,'#bc503e',2.5,.9);ctx.setLineDash([]);
+      const p=proj([0,BEAM.y+.35,BEAM.z]);
+      ctx.beginPath();ctx.arc(p[0],p[1],12,0,Math.PI*2);ctx.fillStyle='#c55340';ctx.fill();
+      ctx.strokeStyle='#fff5ed';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(p[0]-4,p[1]-4);ctx.lineTo(p[0]+4,p[1]+4);ctx.moveTo(p[0]+4,p[1]-4);ctx.lineTo(p[0]-4,p[1]+4);ctx.stroke();
+      return;
+    }
+    for(const [x,z] of(classroom()?outletSites():[visualSite])){
+    branch=FLOWCRAFT_MODEL.branchPath(state,[x,z]);
+    const q=(state.faultMode?FLOWCRAFT_MODEL.deliveredFlow(state):rotorQ)/(classroom()?state.outlets:1),jet=clamp((target.draft-.18)/.28,0,1),outletY=FLOWCRAFT_MODEL.outletHeight(state);
+    const ductPath=[[3.5,3.26,-2.9],...branch.map(([a,b,c])=>[a,b+.2,c]),[x,outletY-.09,z]];
+    stroke3(ductPath,'#3e9cb3',1+q/85,plan?.85:.55);
+    for(let i=0;i<12;i++){
+      const ph=(flowPhase*.37+i/12)%1,p=proj(along(ductPath,ph));ctx.fillStyle='#e3ffff';ctx.beginPath();ctx.arc(p[0],p[1],Math.max(1.8,scale*.065),0,Math.PI*2);ctx.fill();
+    }
+    if(jet>.05){
+      const pp=[[x-.23,outletY-.15,z],[x+.23,outletY-.15,z],[x+.55,outletY-.15-(.8+jet*1.23),z+jet*.9],[x-.55,outletY-.15-(.8+jet*1.23),z+jet*.9]].map(proj);
+      ctx.beginPath();ctx.moveTo(pp[0][0],pp[0][1]);pp.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=`rgba(40,152,209,${jet*.13})`;ctx.fill();
+    }
+    for(let j=0;j<5;j++){
+      const dir=j/5*Math.PI*2, pts=[];
+      for(let k=0;k<=16;k++){
+        const u=k/16,spread=(1-jet)*1.8+.55;
+        pts.push([x+Math.cos(dir)*u*spread,outletY-.15-u*(.8+jet*1.23),z+Math.sin(dir)*u*spread+u*jet*.9]);
+      }
+      stroke3(pts,jet>.3?'#168bbd':'#268f9f',1+q/150,.35+q/600);
+      for(let j2=0;j2<4;j2++){
+        const ph=(flowPhase*.6+j2/4+j*.11)%1;
+        const p=proj(along(pts,ph)), tail=proj(along(pts,Math.max(0,ph-.055)));
+        ctx.strokeStyle=jet>.3?'#2486b5':'#e4ffff';ctx.lineWidth=clamp(scale*.08,1.5,3);ctx.globalAlpha=(1-ph)*.88;
+        ctx.beginPath();ctx.moveTo(tail[0],tail[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();ctx.globalAlpha=1;
+      }
+    }
+    }
+    const ret=[[-4.2,2.7,-3.5],[3.85,2.7,-3.5]];stroke3(ret,'#c38b61',1,.35);
+    for(let i=0;i<8;i++){const p=proj(along(ret,(flowPhase*.17+i/8)%1));ctx.beginPath();ctx.arc(p[0],p[1],1.5,0,Math.PI*2);ctx.fillStyle='#e2b181';ctx.fill();}
+    if(hero.path.length){stroke3([[hero.x,.09,hero.z],...hero.path.map(p=>[p.x,.09,p.z])],'#e1b567',1.5,.7);}
+    const hp=proj([hero.x,.1,hero.z]);ctx.save();ctx.translate(hp[0],hp[1]);ctx.scale(1,.42);ctx.beginPath();ctx.arc(0,0,.38*scale,0,Math.PI*2);ctx.strokeStyle='#ecc572';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+  }
+  function paintSound(t){
+    if(!connected())return;
+    const strength=clamp((display.noise-35)/12,0,1);if(strength<.01)return;
+    const p=proj([visualSite[0],FLOWCRAFT_MODEL.outletHeight(state)-.21,visualSite[1]]);
+    for(let i=0;i<3;i++){const ph=reduced?(.3+i*.2):(t*.72+i/3)%1;ctx.beginPath();ctx.ellipse(p[0],p[1]+5,scale*(.35+ph*.95),scale*(.20+ph*.5),0,0,Math.PI*2);ctx.strokeStyle='#cf8059';ctx.lineWidth=1.8;ctx.globalAlpha=(1-ph)*strength*.85;ctx.stroke();}ctx.globalAlpha=1;
+  }
+  function paintDimensions(){
+    if(!classroom()||panel!=='study')return;
+    const rulers=[[[ -4.9,.09,3.5],[4.9,.09,3.5],'8 m'],[[-4.55,.09,-3.9],[-4.55,.09,3.9],'6 m'],[[-4.7,.09,-3.7],[-4.7,3.6,-3.7],'3 m']];
+    ctx.font='700 11px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+    for(const [a,b,label] of rulers){stroke3([a,b],'#277566',1.6,.9);const p=proj(a.map((v,k)=>(v+b[k])/2));ctx.fillStyle='#f3fff4';ctx.fillRect(p[0]-17,p[1]-10,34,20);ctx.fillStyle='#256557';ctx.fillText(label,p[0],p[1]);}
+  }
+  const labelRoot=$('.af-labels'), bubbles=[],points=[];
+  for(let i=0;i<2;i++){const b=document.createElement('span');b.className='af-bubble';labelRoot.append(b);bubbles.push(b);}
+  const you=document.createElement('span');you.className='af-bubble';you.textContent='DU · FLOW';you.style.fontSize='10px';labelRoot.append(you);
+  const beamLabel=document.createElement('span');beamLabel.className='af-bubble af-beam-label';labelRoot.append(beamLabel);
+  const portLabels=[];for(let i=0;i<4;i++){const b=document.createElement('span');b.className='af-bubble af-outlet-label';labelRoot.append(b);portLabels.push(b);}
+  for(let i=0;i<3;i++){const b=document.createElement('button');b.className='af-bubble af-point';b.type='button';b.tabIndex=-1;b.textContent='ABC'[i];b.setAttribute('aria-label','Einbauort '+'ABC'[i]);b.addEventListener('click',()=>chooseSite(i));labelRoot.append(b);points.push(b);}
+  function placeLabel(el,p){const [x,y]=proj(p);el.hidden=x<12||x>width-12||y<48||y>height-45;if(!el.hidden){el.style.left=x+'px';el.style.top=y+'px';}}
+  const firstWorldChoices=[...root.querySelectorAll('[data-world-choice]')],worldAction=act('world-action');
+  const firstTarget=()=>({window:[.8,2,-3.55],investigate:[3.91,3.15,-2.85],clue:[3.91,3.15,-2.85],boost:[CLASSROOM.slots[1][0],2.85,CLASSROOM.slots[1][1]],balance:[3.91,3.15,-2.85],check:[0,.2,1.35],finish:[3.25,1.7,-1.65]}[onboarding]||null);
+  function placeWorldPrompt(el,p){const [x,y]=proj(p);el.hidden=false;el.style.left=clamp(x,50,width-50)+'px';el.style.top=clamp(y,28,height-28)+'px';}
+  function updateLabels(){
+    ui('beam-cues').hidden=!(beamCue&&state.mission===1&&state.route===2);if(!ui('beam-cues').hidden){const phase=installation?1-installation.left/installation.duration:1;ui('beam-cues').textContent=reduced?'↓ UNTERFÜHRUNG ↑':phase<.3?'↓ KANAL ABSENKEN':phase<.65?'UNTER DEM TRÄGER DURCH':phase<1?'↑ WIEDER AUF NORMALHÖHE':'WEG FREI!';}
+    ui('beam-down').hidden=ui('beam-cues').hidden;ui('beam-up').hidden=ui('beam-cues').hidden;if(!ui('beam-cues').hidden){placeLabel(ui('beam-down'),[0,2.65,-2.7]);placeLabel(ui('beam-up'),[0,2.9,-1.54]);}
+    const guide=tutorialTarget();if(guide){placeLabel(act('guide-target'),[guide[0],.55,guide[2]]);if(introLeft||destination||siteAction||guidance.level<2)act('guide-target').hidden=true;}
+    const showFirst=firstImpression&&guided()&&!introLeft&&!destination&&!siteAction;
+    const choicePositions={window:[.8,2,-3.55],boost:[CLASSROOM.slots[0][0],2.8,CLASSROOM.slots[0][1]],investigate:[3.91,3.15,-2.85]};
+    firstWorldChoices.forEach(b=>{const key=b.dataset.worldChoice,done=!!firstRoutes[key];b.textContent=`${done?'✓ ':''}${firstRouteNames[key]}`;b.dataset.discovered=String(done);if(showFirst&&onboarding==='choice')placeWorldPrompt(b,choicePositions[key]);else b.hidden=true;});
+    const ft=firstTarget();if(showFirst&&onboarding!=='choice'&&ft&&!['window-fresh','boost-fresh'].includes(onboarding)){worldAction.textContent={window:'Fenster schliessen',investigate:'Anlage prüfen',clue:'Stärker stellen',boost:'Luft verteilen',balance:'Ruhiger stellen',check:'Klasse prüfen',finish:'Mission abschliessen'}[onboarding]||'Weiter';placeWorldPrompt(worldAction,ft);}else worldAction.hidden=true;
+    portLabels.forEach((b,i)=>{if(!guided()&&classroom()&&i<state.outlets&&panel!=='study'&&(height>=300||i===0)){const [x,z]=CLASSROOM.slots[i];b.textContent=`${i+1} · ${(FLOWCRAFT_MODEL.deliveredFlow(state)/state.outlets).toFixed(0)} m³/h`;placeLabel(b,[x,3.02,z]);}else b.hidden=true;});
+    [0,3].forEach((idx,i)=>{const m=workerMood(classroom()?(i===0?0:6):idx),b=bubbles[i];b.textContent=m==='waiting'?'Wir warten …':m==='tired'?(['So müde …','Konzentration weg …','Ist die Luft schlecht?'][(Math.floor(elapsed/6)+i)%3]):m==='stuffy'?'Uff … stickig!':m==='noise'?'Zu laut!':m==='draft'?'Es zieht!':completed?(i?'Danke!':'Jetzt geht’s!'):(i?'Ich bin wieder wach!':'Viel besser!');b.dataset.mood=m==='good'?'good':'bad';placeLabel(b,[workers[idx][0],1.83,workers[idx][1]]);if((classroom()&&(panel==='study'||(height<400&&!closeView.mix)))||placing||ui('selection').hidden===false||(height<300&&(i===1||m==='good')))b.hidden=true;});
+    placeLabel(you,[hero.x,2.15,hero.z]);if(placing||height<300||classroom()&&panel==='study'||closeView.mix)you.hidden=true;
+    points.forEach((b,i)=>{if(placing&&state.mission===0)placeLabel(b,[SITES[i][0],2.98,SITES[i][1]]);else b.hidden=true;});
+    if(state.mission===1){beamLabel.textContent=connected()?'✓ Weg frei':'× Träger im Weg';beamLabel.dataset.clear=String(connected());placeLabel(beamLabel,[0,BEAM.y+.63,BEAM.z]);}else beamLabel.hidden=true;
+  }
+  function chooseSite(i){if(!placing||state.mission!==0||!SITES[i])return;change({site:i});}
+  function chooseRoute(i){if(!placing||state.mission!==1||!ROUTES[i])return;change({route:i});}
+
+  // Small grid pathfinder keeps the player out of desks, chairs and workers.
+  const STEP=.3, NX=31,NZ=24;
+  function gridPoint(id){return{x:-4.5+(id%NX)*STEP,z:-3.45+Math.floor(id/NX)*STEP};}
+  function free(p){return Math.abs(p.x)<4.65&&Math.abs(p.z)<3.65&&!obstacles.some(o=>Math.abs(p.x-o.x)<o.hw+.14&&Math.abs(p.z-o.z)<o.hd+.14)&&!(classroom()&&workers.some(([x,z])=>[-.5,.5].some(dx=>Math.abs(p.x-x-dx)<.4&&Math.abs(p.z-z)<.4)))&&!(classroom()&&Math.abs(p.x-3.25)<.36&&Math.abs(p.z+1.65)<.36)&&!(state.mission===1&&[-1.6,1.6].some(x=>Math.abs(p.x-x)<.34&&Math.abs(p.z-BEAM.z)<.36));}
+  function closestFree(x,z){let best=-1,dist=Infinity;for(let id=0;id<NX*NZ;id++){const p=gridPoint(id);if(!free(p))continue;const d=(p.x-x)**2+(p.z-z)**2;if(d<dist){dist=d;best=id;}}return best;}
+  function pathTo(x,z){
+    const start=closestFree(hero.x,hero.z),end=closestFree(x,z);if(start<0||end<0)return;
+    const queue=[start],parent=new Int32Array(NX*NZ).fill(-1);parent[start]=start;
+    for(let head=0;head<queue.length&&parent[end]<0;head++){
+      const id=queue[head],col=id%NX,row=Math.floor(id/NX);
+      for(const [dx,dz] of[[1,0],[-1,0],[0,1],[0,-1]]){const xx=col+dx,zz=row+dz;if(xx<0||xx>=NX||zz<0||zz>=NZ)continue;const next=zz*NX+xx;
+        if(parent[next]>=0||!free(gridPoint(next)))continue;parent[next]=id;queue.push(next);}
+    }
+    if(parent[end]<0){toast('Diesen Ort erreichst du nicht. Wähle einen freien Gang.');return;}
+    let result=[],id=end;
+    for(let steps=0;id!==start&&steps<NX*NZ;steps++){if(id<0)return;result.push(gridPoint(id));id=parent[id];}
+    if(id!==start)return;result.reverse();hero.path=result;
+  }
+  function moveHero(dt){
+    if(!hero.path.length)return;let distance=(destination?4.6:3.5)*dt;
+    while(distance>0&&hero.path.length){const next=hero.path[0],dx=next.x-hero.x,dz=next.z-hero.z,l=Math.hypot(dx,dz);if(l<.001){hero.path.shift();continue;}
+      const s=Math.min(l,distance);hero.x+=dx/l*s;hero.z+=dz/l*s;hero.a+=Math.atan2(Math.sin(Math.atan2(dx,dz)-hero.a),Math.cos(Math.atan2(dx,dz)-hero.a))*Math.min(1,dt*14);distance-=s;hero.step+=s*2;if(!destination&&atInspection())inspectionVisited=true;
+      if(l<=s+.001)hero.path.shift();}
+  }
+  function screenPoint(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+  function tap(x,y){
+    if(modalOpen||introLeft)return;
+    if(firstImpression&&guided()){
+      if(onboarding==='choice'){
+        const targets={window:[.8,2,-3.55],boost:[CLASSROOM.slots[0][0],2.8,CLASSROOM.slots[0][1]],investigate:[3.91,3.15,-2.85]};
+        for(const [choice,point] of Object.entries(targets)){const p=proj(point);if(Math.hypot(p[0]-x,p[1]-y)<62){firstChoice(choice);return;}}
+      }else{const point=firstTarget();if(point){const p=proj(point);if(Math.hypot(p[0]-x,p[1]-y)<68){tutorialAction();return;}}}
+    }
+    if(guided()&&opening()){if(onboarding==='measure'&&!tutorialMeasure){const p=proj([0,.1,1.35]);if(Math.hypot(p[0]-x,p[1]-y)<70){pathTo(0,1.35);return;}}else if(onboarding==='unit'){tutorialAction();return;}else return;}
+    if(serviceTask||siteAction){toast('Untersuchung läuft. Einen Moment …');return;}
+    if(placing){if(state.mission!==0)return;let best=-1,d=34;SITES.forEach(([px,pz],i)=>{const p=proj([px,2.98,pz]),di=Math.hypot(p[0]-x,p[1]-y);if(di<d){d=di;best=i;}});if(best>=0)chooseSite(best);return;}
+    const picks=[[[visualSite[0],FLOWCRAFT_MODEL.outletHeight(state),visualSite[1]],'Zuluftauslass',state.mission===1?'Der neue Auftrag verlangt den Auslass im Mittelgang. Die Unterführung senkt nur den Kanal ab. Der Auslass bleibt auf normaler Höhe.':'Hier kommt die aufbereitete Aussenluft an. Tippe unten auf Auslass, um den Einbauort zu ändern.'],[[3.91,3.1,-2.85]],[[0,3.07,-2.9]],[[2.72,3.1,-2.9]]];
+    if(classroom()){
+      picks[0][2]=`Lesen und rechnen brauchen Ruhe. ${state.outlets} Auslässe teilen sich ${state.q} m³/h. Unter Auslässe kannst du weitere einbauen oder entfernen.`;
+    }
+    if(state.mission===1)picks.push([[0,BEAM.y,BEAM.z],'Träger und Kanal: Platz für beide','Ein Träger stützt das Gebäude. Dein Kanal braucht einen freien Weg. Gebäudetechnikplaner/innen stimmen solche Platzfragen mit anderen Planenden ab.']);
+    picks[1].push('Ventilator',state.ec?'Der EC-Ventilator braucht bei gleicher Luftmenge weniger Strom.':'Der Ventilator bewegt die Luft. Teste bei den Bauteilen eine sparsamere Variante.');
+    picks[2].push('Lüftungskanal','Hier strömt frische Luft durch das Gebäude. Fachwort: Zuluft. Wenn du den Luftauslass versetzt, bleibt die Verbindung im Spiel erhalten.');
+    picks[3].push('Schalldämpfer',state.sd?'Macht den Ventilator leiser, bietet der Luft aber auch mehr Widerstand.':'Dieses Bauteil kann Ventilatorlärm reduzieren. Fachwort: Schalldämpfer.');
+    if(classroom()&&state.vr)picks.push([[.65,3.43,-2.9],'Volumenstromregler',state.vrActive?'Dieser Luftregler ist aktiv. Tippe unten auf die Luftmenge, um sie genau einzustellen.':'Dieser Luftregler ist eingebaut, aber noch nicht aktiv. Tippe unten auf die Luftmenge.']);
+    let chosen=null,min=width<500?34:28;for(const item of (guided()&&opening()?[]:picks)){const p=proj(item[0]),d=Math.hypot(p[0]-x,p[1]-y);if(d<min){min=d;chosen=item;}}
+    if(chosen&&state.faultMode&&!state.repaired&&chosen[1]==='Ventilator'){if(!state.roomChecked){toast('Erst im Raum messen. Was kommt dort wirklich an?');return;}caseAction();return;}
+    if(chosen){approach(chosen[0],()=>{
+      if(chosen[1]==='Volumenstromregler')preciseFlow();
+      else if(classroom()&&['Ventilator','Schalldämpfer'].includes(chosen[1]))openPanel('technology');
+      else if(classroom()&&chosen[1]==='Zuluftauslass')openPanel('outlets');
+      else openModal(chosen[1],'FLOWCRAFT · VOR ORT',`<p>${chosen[2]}</p>`,
+        chosen[1]==='Ventilator'?[['Ventilator wechseln',()=>{closeModal();act('fan').click();}],['Zurück',closeModal]]:
+        chosen[1]==='Schalldämpfer'?[['Leiser machen',()=>{closeModal();act('silencer').click();}],['Zurück',closeModal]]:
+        chosen[1]==='Zuluftauslass'?[['Auslass versetzen',()=>{closeModal();act('place').click();}],['Zurück',closeModal]]:[['Weiterspielen',closeModal]]);
+    },chosen[1]);return;}
+    ui('selection').hidden=true;
+    const px=(x-cameraX)/scale,py=(cameraY-y)/scale,depth=-(py+1.4*cp)/sp;
+    const wx=(cx*px+sx*depth)/(classroom()?.8:1),wz=(-sx*px+cx*depth)/(classroom()?.75:1);
+    if(Math.abs(wx)<=4.75&&Math.abs(wz)<=3.75){destination=null;inspecting=0;pathTo(wx,wz);}
+  }
+  const pointers=new Map();let gesture=null;
+  canvas.addEventListener('pointerdown',e=>{
+    if(modalOpen||introLeft||e.button>0)return;canvas.setPointerCapture?.(e.pointerId);pointers.set(e.pointerId,screenPoint(e));
+    if(pointers.size===1){const p=screenPoint(e);gesture={start:p,last:p,drag:false,multi:false,dist:0};}
+    if(pointers.size>=2&&gesture){gesture.multi=true;const p=[...pointers.values()];gesture.dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);}
+  });
+  canvas.addEventListener('pointermove',e=>{
+    if(!pointers.has(e.pointerId)||!gesture)return;const p=screenPoint(e);pointers.set(e.pointerId,p);
+    if(pointers.size===1&&!gesture.multi){if(Math.hypot(p.x-gesture.start.x,p.y-gesture.start.y)>7)gesture.drag=true;
+      if(gesture.drag){angle-=(p.x-gesture.last.x)*.008;fitCamera();}gesture.last=p;
+    }else if(pointers.size>=2){const ps=[...pointers.values()],d=Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y);
+      if(gesture.dist>0){zoom=clamp(zoom*d/gesture.dist,.82,1.75);fitCamera();}gesture.dist=d;}
+  });
+  function endPointer(e,cancelled){
+    if(!pointers.has(e.pointerId))return;const g=gesture;const p=screenPoint(e);pointers.delete(e.pointerId);
+    if(!cancelled&&!pointers.size&&g&&!g.drag&&!g.multi)tap(p.x,p.y);
+    if(!pointers.size)gesture=null;else if(gesture)gesture.multi=true;
+  }
+  canvas.addEventListener('pointerup',e=>endPointer(e,false));
+  canvas.addEventListener('pointercancel',e=>endPointer(e,true));
+  canvas.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))endPointer(e,true);});
+  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=clamp(zoom*Math.exp(-e.deltaY*.001),.82,1.75);fitCamera();},{passive:false});
+  flow.addEventListener('input',()=>setFlow(Number(flow.value)));
+  $$('.af-meter').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.metric;if(classroom()&&k==='co2')info('Frische Luft zum Lernen','Acht Lernende geben CO₂ ab. Mehr Aussenluft senkt den Wert. Im Raumplan gilt der Spielauftrag: 144 m³ Raumvolumen zweimal pro Stunde austauschen. CO₂ ist unsichtbar.');else if(classroom()&&k==='draft')info('Die Luft gut verteilen','Teile die gesamte Luftmenge auf mehrere Luftauslässe. Weniger Luft je Luftauslass senkt hier Lärm und Zugluft. Zusätzliche Bauteile kosten Geld.');else info(...DETAILS[k]);}));
+  $$('.af-sites button').forEach(b=>b.addEventListener('click',()=>chooseSite(Number(b.dataset.site))));
+  $$('.af-routes button').forEach(b=>b.addEventListener('click',()=>chooseRoute(Number(b.dataset.route))));
+  act('missions').onclick=missionBoard;act('skip-intro').onclick=finishIntro;act('tutorial-action').onclick=tutorialAction;act('guide-target').onclick=()=>guided()?tutorialAction():preciseFlow();
+  $$('.af-quick-choices button').forEach(b=>b.onclick=()=>firstChoice(b.dataset.choice));
+  act('start-case').onclick=caseBrief;act('case-action').onclick=caseAction;
+  act('inspect').onclick=inspect;
+  act('stop-walk').onclick=cancelJourney;
+  act('visit-unit').onclick=()=>approach([3.91,3.1,-2.85],()=>openPanel('technology'),'Lüftungsgerät');
+  act('less').onclick=()=>setFlow(state.q-(classroom()?(state.vrActive?1:120):5));act('more').onclick=()=>setFlow(state.q+(classroom()?(state.vrActive?1:120):5));
+  act('precise').onclick=preciseFlow;act('budget').onclick=budgetReport;
+  act('technology').onclick=()=>openPanel('technology');act('outlets').onclick=()=>openPanel('outlets');act('study').onclick=()=>openPanel('study');
+  act('regulator').onclick=()=>change({vr:!state.vr});act('class-silencer').onclick=()=>change({sd:!state.sd});act('class-fan').onclick=()=>change({ec:!state.ec});
+  act('add-outlet').onclick=()=>{if(classroom()&&state.outlets<4)change({outlets:state.outlets+1});};
+  act('remove-outlet').onclick=()=>{if(classroom()&&state.outlets>1)change({outlets:state.outlets-1});};
+  $$('[data-answer]').forEach((b,i)=>b.addEventListener('click',()=>answerStudy(i)));
+  act('silencer').onclick=()=>change({sd:!state.sd},state.sd?'Schalldämpfer ausgebaut. Betrag zurückgebucht.':'Schalldämpfer eingebaut. Wird es leiser?');
+  act('fan').onclick=()=>change({ec:!state.ec},state.ec?'Ursprünglicher Ventilator wieder eingesetzt.':'Sparsamer EC-Ventilator eingebaut. Vergleiche den Stromverbrauch.');
+  act('place').onclick=()=>{placing=true;feedbackUntil=0;ui('selection').hidden=true;ui('toast').hidden=true;refresh();};
+  act('cancel-place').onclick=()=>{placing=false;panel='menu';feedbackUntil=0;refresh();};
+  act('plan').onclick=()=>{plan=!plan;refresh();fitCamera();};
+  act('check').onclick=commission;act('trial').onclick=trialReport;act('help').onclick=help;act('close-modal').onclick=closeModal;
+  act('close-info').onclick=()=>ui('selection').hidden=true;
+  act('reset').onclick=()=>openModal('Mission neu starten?','FLOWCRAFT · NEUSTART','<p>Bauteile, Budget, Messwerte und Kamera werden vollständig zurückgesetzt.</p>',[['Neu starten',reset],['Weiterspielen',closeModal]]);
+  act('home').onclick=()=>{angle=.57;zoom=1;fitCamera();};
+  act('zoom-in').onclick=()=>{zoom=clamp(zoom*1.12,.82,1.75);fitCamera();};
+  act('zoom-out').onclick=()=>{zoom=clamp(zoom/1.12,.82,1.75);fitCamera();};
+  async function toggleFullscreen(){
+    try{if(document.fullscreenElement===root)await document.exitFullscreen();else if(root.requestFullscreen)await root.requestFullscreen();else throw Error('not supported');}
+    catch(e){toast('Vollbild ist in dieser Vorschau nicht verfügbar. Die HTML-Datei lässt sich separat im Browser öffnen.');}
+  }
+  root.addEventListener('keydown',e=>{
+    if(!modalOpen&&!introLeft&&!tutorialMeasure&&!siteAction&&!serviceTask&&!['INPUT','TEXTAREA'].includes(e.target.tagName)&&['w','a','s','d'].includes(e.key.toLowerCase())){
+      e.preventDefault();const key=e.key.toLowerCase();
+      if(pendingFirstChoice)cancelJourney();else{destination=null;inspecting=0;}
+      pathTo(hero.x+(key==='a'?-.6:key==='d'?.6:0),hero.z+(key==='w'?-.6:key==='s'?.6:0));
+    }
+    if(e.key==='Escape'){if(introLeft){finishIntro();return;}tutorialMeasure=0;cancelJourney();if(modalOpen)closeModal();else if(placing||panel!=='menu'){placing=false;panel='menu';refresh();}else ui('selection').hidden=true;}
+    if(modalOpen&&e.key==='Tab'){const bs=[...ui('modal').querySelectorAll('button, input')].filter(b=>!b.disabled),first=bs[0],last=bs.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+    if(e.target===canvas){if(e.key==='ArrowLeft')angle+=.12;if(e.key==='ArrowRight')angle-=.12;if(e.key==='+')zoom=clamp(zoom*1.1,.82,1.75);if(e.key==='-')zoom=clamp(zoom/1.1,.82,1.75);if(['ArrowLeft','ArrowRight','+','-'].includes(e.key)){e.preventDefault();fitCamera();}}
+  });
+  const ro=new ResizeObserver(resize);ro.observe(root);ro.observe(world);
+  const io=new IntersectionObserver(es=>{visible=es[0]?.isIntersecting!==false;syncSound();});io.observe(root);
+  const onVisibility=()=>{lastTime=0;syncSound();};document.addEventListener('visibilitychange',onVisibility);
+  const rm=matchMedia('(prefers-reduced-motion: reduce)');const onMotion=()=>{reduced=rm.matches;};rm.addEventListener?.('change',onMotion);
+  function destroy(){ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',onVisibility);rm.removeEventListener?.('change',onMotion);noiseSource?.stop();audio?.close();}
+  function frame(now){
+    if(!root.isConnected){destroy();return;}requestAnimationFrame(frame);
+    if(document.hidden||!visible){lastTime=now;return;}
+    if(modalOpen){lastTime=now;return;}
+    if(now-lastPaint<31)return;
+    const dt=clamp((now-(lastTime||now))/1000,0,.08);lastTime=now;lastPaint=now;
+    if(!modalOpen){
+      elapsed+=dt;uiTime+=dt;target=model();
+      const running=connected();
+      if(running)for(const k of Object.keys(LIMITS)){const rate=k==='co2'?1.25:.42;display[k]=lerp(display[k],target[k],1-Math.exp(-dt/rate));if(Math.abs(display[k]-target[k])<.00001)display[k]=target[k];}
+      rotorQ=lerp(rotorQ,running?state.q:0,1-Math.exp(-dt/.24));
+      if(!reduced&&running){flowPhase+=dt*(.25+FLOWCRAFT_MODEL.deliveredFlow(state)/130);fanPhase+=dt*(2+rotorQ*.065);}else if(reduced){flowPhase=.24;fanPhase=.4;}
+      visualSite=visualSite.map((v,i)=>lerp(v,SITES[state.site][i],reduced?1:1-Math.exp(-dt*7)));
+      windowPhase=lerp(windowPhase,windowOpen?1:0,reduced?1:1-Math.exp(-dt*7));
+      sdLift=lerp(sdLift,state.sd?1:0,reduced?1:1-Math.exp(-dt*8));pulse=Math.max(0,pulse-dt*1.3);celebrate=Math.max(0,celebrate-dt*.6);
+      tickTutorial(dt);tickService(dt);moveHero(dt);arrive();reaction=Math.max(0,reaction-dt);
+      if(inspecting>0){inspecting=Math.max(0,inspecting-dt);if(!inspecting){inspectionDone=true;reaction=1;reward('measurement',100,'Luftzug gemessen');
+        inspectionReading={...display,q:state.q,site:state.site,sd:state.sd,ec:state.ec};inspectionReport();}}
+      updateInspection();
+      if(running&&planReady()&&spending()<=budget()&&allGood(display)&&allGood(target))stable+=dt;else stable=0;
+      if(stable>=ASSUMPTIONS.stabilitySeconds)reward('goals',50,'4 / 4 technische Ziele!');
+      if(uiTime>.09){uiTime=0;paintMeters();syncSound();}
+      if(elapsed>toastUntil)ui('toast').hidden=true;if(elapsed>infoUntil)ui('selection').hidden=true;
+    }
+    if(modalOpen)syncFlow(dt);
+    paintScene(reduced?0:elapsed);
+  }
+  buildStatic();refresh();updateInspection();resize();if(reduced)finishIntro();else for(const el of [$('.af-head'),$('.af-meters'),world,$('.af-controls')])el.inert=true;requestAnimationFrame(frame);
+  // Read-only snapshots and pure model functions support repeatable browser tests.
+  root.flowcraft={snapshot:()=>({firstImpression,firstChoices:[...firstChoices],pendingFirstChoice,firstRun:{...firstRun},firstBest,firstRoutes:{...firstRoutes},firstRouteCount:firstRouteCount(),missionProgress:{...missionProgress},firstComfortable:firstComfortable(),windowOpen,windowPhase,onboarding:guided()?onboarding:'done',guidance:{level:guidance.level,idle:guidance.idle},camera:{mix:closeView.mix,transition:closeView.transition,scale,x:cameraX,y:cameraY},people:Array.from({length:classroom()?8:4},(_,i)=>workerMood(i)),siteAction:siteAction?{kind:siteAction.kind,left:siteAction.left}:null,tutorialMeasure,introLeft,xp,installation:installation?{...installation}:null,serviceTask:serviceTask?{kind:serviceTask.kind,left:serviceTask.left}:null,medals:{...medals},lastRating:lastRating?{...lastRating}:null,deliveredFlow:FLOWCRAFT_MODEL.deliveredFlow(state),inspectionReading:inspectionReading?{...inspectionReading}:null,bestFlow:{...bestFlow},flowMax:FLOW_MAX[missionKey()],shownXP,beamCue,inspectionDone,inspectionVisited,inspecting,destination:destination?{x:destination.x,z:destination.z,label:destination.label}:null,state:{...state},target:{...target},display:{...display},spent:spending(),budget:budget(),connected:connected(),stable,completed,placing,plan,panel,studyStage,hero:{x:hero.x,z:hero.z,path:hero.path.map(p=>({...p}))},visualSite:[...visualSite],sdLift,zoom,angle,resetCount,reduced,sound,modalOpen,branchLength:FLOWCRAFT_MODEL.branchLength(state)}),model,project:p=>proj(p),isFree:free,startChallenge};
+})();
+
+</script>
+</body></html>
